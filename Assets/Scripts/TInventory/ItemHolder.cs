@@ -144,7 +144,7 @@ namespace TInventory
 
                     Debug.Log(containerAtTouch);
                     
-                    TInventory.Inventory.GetWindowAtTouch().UpdateViewport();
+                    TInventory.Inventory.GetWindowAtMousePosition().UpdateViewport();
                     
                     itemAtTouch = TInventory.Inventory.GetItemAt(Input.mousePosition, heldItem.gameObject);
 

@@ -57,7 +57,7 @@ namespace TInventory
         [SerializeField]
         private EventSystem eventSystem;
 
-        public global::TInventory.Container.Container inventoryContainer;
+        public TInventory.Container.Container inventoryContainer;
         
         private void Awake()
         {
@@ -72,7 +72,7 @@ namespace TInventory
         /// TODO IMPLEMENT
         /// </summary>
         /// <param name="container"></param>
-        public void OpenContainer(global::TInventory.Container.Container container)
+        public void OpenContainer(TInventory.Container.Container container)
         {
             
         }
@@ -95,20 +95,8 @@ namespace TInventory
 
             return results;
         }
-        
-        /// <summary>
-        /// Check if touch is on an item, ignoring 'ignoreItem' if it's supplied.
-        /// </summary>
-        /// <param name="item">Set to item at touch if one is found.</param>
-        /// <param name="ignoreItem">Item to be ignored.</param>
-        /// <returns>True if an item is found at touch position.</returns>
-        public static bool IsTouchOnItem(out AItem item, GameObject ignoreItem = null)
-        {
-            item = GetItemAt(Input.mousePosition, ignoreItem);
-            return !(item is null);
-        }
 
-        
+
         /// <summary>
         /// Gets item at position. If an ignored item is supplied, the ignored item will be ignored.
         /// </summary>
@@ -152,7 +140,7 @@ namespace TInventory
         /// Gets the container at position.
         /// </summary>
         /// <returns>Returns Container at position.</returns>
-        public static global::TInventory.Container.Container GetContainer(Vector2 position)
+        public static TInventory.Container.Container GetContainer(Vector2 position)
         {
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
@@ -169,7 +157,7 @@ namespace TInventory
         /// Gets the container at touch position.
         /// </summary>
         /// <returns>Returns Container at touch position.</returns>
-        public static Window.Window GetWindowAtTouch()
+        public static Window.Window GetWindowAtMousePosition()
         {
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(Input.mousePosition))
@@ -177,6 +165,23 @@ namespace TInventory
                 if (result.gameObject.CompareTag("Window"))
                 {
                     return result.gameObject.GetComponent<Window.Window>();
+                }
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Gets the header for the window at the mouse position.
+        /// </summary>
+        /// <returns>Window Header GameObject</returns>
+        public static GameObject GetWindowHeaderAtMousePosition()
+        {
+            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            foreach (RaycastResult result in GetRaycastResults(Input.mousePosition))
+            {
+                if (result.gameObject.CompareTag("WindowHeader"))
+                {
+                    return result.gameObject;
                 }
             }
             return null;
