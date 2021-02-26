@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TInventory
+namespace TInventory.Window
 {
     public class Window : MonoBehaviour
     {

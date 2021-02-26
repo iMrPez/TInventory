@@ -169,14 +169,14 @@ namespace TInventory
         /// Gets the container at touch position.
         /// </summary>
         /// <returns>Returns Container at touch position.</returns>
-        public static Window GetWindowAtTouch()
+        public static Window.Window GetWindowAtTouch()
         {
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(Input.mousePosition))
             {
                 if (result.gameObject.CompareTag("Window"))
                 {
-                    return result.gameObject.GetComponent<Window>();
+                    return result.gameObject.GetComponent<Window.Window>();
                 }
             }
             return null;
