@@ -58,6 +58,7 @@ namespace TInventory.Container
                     if (CanPlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup, item))
                     {
                         Debug.Log($"Placing {item} At {slotGroup.Slot}!", slotGroup.ContainerGroup);
+                        
                         PlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup, item);
                     }
                     else
@@ -275,6 +276,8 @@ namespace TInventory.Container
         /// TODO TEST
         public bool CanItemFitAt(Vector2 slot, ContainerGroup containerGroup, AItem item)
         {
+            if (containerGroup is null || item is null) return false;
+
             if (slot.x + item.size.x <= containerGroup.size.x && slot.y + item.size.y <= containerGroup.size.y)
             {
                 for (float x = slot.x; x < slot.x + item.size.x; x++)
@@ -315,6 +318,9 @@ namespace TInventory.Container
         /// <returns>Returns true if an Item exists at Slot</returns>
         public bool IsSlotInUse(float x, float y, ContainerGroup containerGroup, GameObject itemToIgnore = null)
         {
+
+            if (containerGroup is null) return true;
+
             foreach (var item in items)
             {
                 if (item.gameObject == itemToIgnore || item.containerGroup != containerGroup) continue;

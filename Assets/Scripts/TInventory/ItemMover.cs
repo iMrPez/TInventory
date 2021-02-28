@@ -8,7 +8,7 @@ namespace TInventory
     /// <summary>
     /// Class handles pick up, holding, and placing Items in Containers. 
     /// </summary>
-    public class ItemHolder : MonoBehaviour
+    public class ItemMover : MonoBehaviour
     {
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace TInventory
         {
             if (Input.GetMouseButtonDown(0))
             {
-                clickedItem = TInventory.Inventory.GetItemAt(Input.mousePosition);
+                clickedItem = Inventory.GetItemAt(Input.mousePosition);
                 
                 if (clickedItem is null) return false;
                 
@@ -103,7 +103,7 @@ namespace TInventory
             if (Input.GetMouseButton(0))
             {
                 return (Time.time - lastTouchTime > touchHoldTime || 
-                        Vector3.Distance(Input.mousePosition, clickedPosition) > TInventory.Inventory.Instance.slotSize / 2);
+                        Vector3.Distance(Input.mousePosition, clickedPosition) > Inventory.Instance.slotSize / 2);
             }
             
             return false;
@@ -132,7 +132,7 @@ namespace TInventory
         private IEnumerator HoldItem()
         {
             // Get currently open container
-            var containerAtTouch = TInventory.Inventory.GetContainer(Input.mousePosition);
+            var containerAtTouch = Inventory.GetContainer(Input.mousePosition);
             
             AItem itemAtTouch = null;
             
@@ -140,13 +140,11 @@ namespace TInventory
             {
                 if (IsHoldingItem())
                 {
-                    containerAtTouch = TInventory.Inventory.GetContainer(Input.mousePosition);
+                    containerAtTouch = Inventory.GetContainer(Input.mousePosition);
 
-                    Debug.Log(containerAtTouch);
+                    Inventory.GetWindowAtMousePosition().UpdateViewport();
                     
-                    TInventory.Inventory.GetWindowAtMousePosition().UpdateViewport();
-                    
-                    itemAtTouch = TInventory.Inventory.GetItemAt(Input.mousePosition, heldItem.gameObject);
+                    itemAtTouch = Inventory.GetItemAt(Input.mousePosition, heldItem.gameObject);
 
                     UpdateHeldItem(containerAtTouch, itemAtTouch);
                 }
@@ -160,11 +158,11 @@ namespace TInventory
         /// Updates background color and position of held item.
         /// </summary>
         /// <param name="openContainer">Currently Open Container</param>
-        private void UpdateHeldItem(global::TInventory.Container.Container openContainer, AItem itemAtTouch)
+        private void UpdateHeldItem(TInventory.Container.Container openContainer, AItem itemAtTouch)
         {
             heldItem.transform.position = (Vector2) Input.mousePosition;
 
-            heldItem.transform.SetParent(TInventory.Inventory.Instance.transform);
+            heldItem.transform.SetParent(Inventory.Instance.transform);
             heldItem.transform.SetAsLastSibling();
 
             releasedAction = null;
@@ -192,7 +190,7 @@ namespace TInventory
         /// </summary>
         /// <param name="openContainer">Currently Open Container</param>
         /// <param name="itemAtTouch"></param>
-        private void HeldItemReleased(global::TInventory.Container.Container openContainer = null, AItem itemAtTouch = null)
+        private void HeldItemReleased(TInventory.Container.Container openContainer = null, AItem itemAtTouch = null)
         {
             // Check if there is an action to do
             if (!(releasedAction is null))

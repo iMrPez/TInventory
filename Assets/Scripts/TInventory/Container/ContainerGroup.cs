@@ -18,7 +18,7 @@ namespace TInventory.Container
             rectTransform = GetComponent<RectTransform>();
         }
 
-        public void Init(int id, Vector2 position, Vector2 size, TInventory.Container.Container container)
+        public void Init(int id, Vector2 position, Vector2 size, Container container)
         {
             this.id = id;
             this.position = position;
@@ -34,17 +34,14 @@ namespace TInventory.Container
         /// <param name="y">y Position</param>
         public void AddPosition(int x, int y)
         {
-            // TODO FIX THIS BULLSHIT
             if (currentPosition.x < x)
             {
-                Debug.Log($"Input: {x} | Current: {currentPosition.x} Increasing {id} X");
                 size.x += 1;
                 currentPosition.x += 1;
             }
 
             if (currentPosition.y < y)
             {
-                Debug.Log($"Input: {y} | Current: {currentPosition.y} Increasing {id} Y");
                 size.y += 1;
                 currentPosition.y += 1;
             }

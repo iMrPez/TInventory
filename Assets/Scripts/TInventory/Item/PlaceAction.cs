@@ -9,6 +9,8 @@ namespace Inventory.Item
         {
             var containerAtTouch = TInventory.Inventory.GetContainer(Input.mousePosition);
 
+            if (containerAtTouch is null) return false;
+            
             var slotGroup = containerAtTouch.GetSlotFromPosition(Input.mousePosition);
             
             return !(heldItem is null) && containerAtTouch.CanItemFitAt(slotGroup.Slot, slotGroup.ContainerGroup,
