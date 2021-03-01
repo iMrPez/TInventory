@@ -486,7 +486,7 @@ GameObject:
   - component: {fileID: 516107459}
   - component: {fileID: 516107462}
   m_Layer: 5
-  m_Name: Inventory
+  m_Name: Window
   m_TagString: Window
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -564,10 +564,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLocked: 0
+  startWithContainers: 1
+  startContainers:
+  - {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
+  - {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
   scrollView: {fileID: 1577508774}
   windowContent: {fileID: 1370305713}
   layoutGroup: {fileID: 1370305714}
-  TestContent: {fileID: 944470950754032733, guid: cea19ffa355ea6c48902cfafb9ba9ac6, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1339,7 +1342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42384c6bff98ae243a569f6f2de6b554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  containerPrefab: {fileID: 516107457}
+  containerPrefab: {fileID: 944470950754032733, guid: cea19ffa355ea6c48902cfafb9ba9ac6, type: 3}
   slotPrefab: {fileID: 3396713034478917749, guid: 2713e197aae97ea419b431214c133c56, type: 3}
   containerGroupPrefab: {fileID: 1501131693330574616, guid: ae0707649a9978549a37e6d6cfb4eabd, type: 3}
   itemPrefab: {fileID: 4747291459301666437, guid: 9da861900a20c524bbdddfbb51e29edb, type: 3}

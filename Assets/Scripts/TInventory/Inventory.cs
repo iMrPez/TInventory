@@ -68,14 +68,6 @@ namespace TInventory
             PointerEventData = new PointerEventData(eventSystem);
         }
 
-        /// <summary>
-        /// TODO IMPLEMENT
-        /// </summary>
-        /// <param name="container"></param>
-        public void OpenContainer(TInventory.Container.Container container)
-        {
-            
-        }
 
         /// <summary>
         /// Gets the hit objects from raycast
@@ -96,6 +88,13 @@ namespace TInventory
             return results;
         }
 
+        public static Container.Container CreateNewContainer()
+        {
+            var container = Instantiate(Instance.containerPrefab).GetComponent<Container.Container>();
+
+            return container;
+        }
+        
 
         /// <summary>
         /// Gets item at position. If an ignored item is supplied, the ignored item will be ignored.
@@ -121,7 +120,7 @@ namespace TInventory
         }
     
         // TODO add summary
-        public static ContainerGroup GetContainerGroup(Vector3 position)
+        public static ContainerGroup GetContainerGroupAt(Vector3 position)
         {
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
@@ -140,7 +139,7 @@ namespace TInventory
         /// Gets the container at position.
         /// </summary>
         /// <returns>Returns Container at position.</returns>
-        public static TInventory.Container.Container GetContainer(Vector2 position)
+        public static TInventory.Container.Container GetContainerAt(Vector2 position)
         {
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))

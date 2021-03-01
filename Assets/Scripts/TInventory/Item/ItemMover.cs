@@ -72,7 +72,7 @@ namespace TInventory
             // TODO RETURN IF INVENTORY IS NOT OPEN
             
             // TODO REMOVE - for testings
-            if (Input.GetKeyDown(KeyCode.R))
+            if (InputHandler.RotateButtonDown())
             {
                 RotateHeldItem();
             }
@@ -89,7 +89,7 @@ namespace TInventory
         /// </summary>
         private bool IsAttemptingToHoldItem()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (InputHandler.GetPrimaryButtonDown())
             {
                 clickedItem = Inventory.GetItemAt(Input.mousePosition);
                 
@@ -100,7 +100,7 @@ namespace TInventory
                 lastTouchTime = Time.time;
             }
 
-            if (Input.GetMouseButton(0))
+            if (InputHandler.GetPrimaryButton())
             {
                 return (Time.time - lastTouchTime > touchHoldTime || 
                         Vector3.Distance(Input.mousePosition, clickedPosition) > Inventory.Instance.slotSize / 2);
@@ -132,15 +132,15 @@ namespace TInventory
         private IEnumerator HoldItem()
         {
             // Get currently open container
-            var containerAtTouch = Inventory.GetContainer(Input.mousePosition);
+            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
             
             AItem itemAtTouch = null;
             
-            while (Input.GetMouseButton(0))
+            while (InputHandler.GetPrimaryButton())
             {
                 if (IsHoldingItem())
                 {
-                    containerAtTouch = Inventory.GetContainer(Input.mousePosition);
+                    containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
 
                     Inventory.GetWindowAtMousePosition().UpdateViewport();
                     

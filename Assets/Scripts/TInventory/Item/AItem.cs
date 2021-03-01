@@ -191,7 +191,7 @@ namespace Inventory.Item
                 /// </summary>
                 public void Destroy()
                 {
-                        containerGroup.parentContainer.items.Remove(this);
+                        containerGroup?.parentContainer.items.Remove(this);
                         Destroy(gameObject);
                 }
         }

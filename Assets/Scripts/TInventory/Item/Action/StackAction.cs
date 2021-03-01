@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Inventory.Item;
+using UnityEngine;
 
-namespace Inventory.Item
+namespace TInventory.Item.Action
 {
     public class StackAction : IItemAction
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Inventory.Item;
+using TInventory.Item;
 using TMPro;
 using UnityEngine;
 
@@ -36,19 +37,20 @@ namespace TInventory.Container
         {
             rectTransform = GetComponent<RectTransform>();
         }
-
-        private void Start()
-        {
-            Inventory.Instance.OpenContainer(this);
-        }
-
+        
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.I)) CreateContainer(containerData);
-            
             // TODO remove create item for testing.
-            if (Input.GetMouseButtonDown(1))
+            if (InputHandler.GetSecondaryButtonDown())
             {
+                if (Inventory.GetContainerAt(Input.mousePosition) == this)
+                {
+                    var item = ItemFactory.instance.CreateBasicItem(5);
+                    if(!AddItem(item)) item.Destroy();
+                }
+                    
+
+                /*
                 var item = ItemFactory.Instance.CreateBasicItem(5);
 
                 var slotGroup = GetSlotFromPosition(Input.mousePosition);
@@ -67,9 +69,17 @@ namespace TInventory.Container
                         Destroy(item.gameObject);
                     }
                 }
+                */
             }
         }
 
+        // TODO ADD SUMMARY
+        public void Initialize(ContainerData containerData)
+        {
+            this.containerData = containerData;
+            CreateContainer(containerData);
+        }
+        
         /// <summary>
         /// Initializes the Container with a determined by the x|y * slot size. 
         /// </summary>
@@ -78,11 +88,11 @@ namespace TInventory.Container
         {
             ClearItems();
 
-            var slotSize = TInventory.Inventory.Instance.slotSize;
+            var slotSize = Inventory.Instance.slotSize;
 
-            var padding = TInventory.Inventory.Instance.padding;
+            var padding = Inventory.Instance.padding;
 
-            var margin = TInventory.Inventory.Instance.margin;
+            var margin = Inventory.Instance.margin;
 
             rectTransform.sizeDelta = new Vector2( (containerData.Width * (slotSize + padding + margin)) + margin,
                 (containerData.Height * (slotSize + padding + margin)) + margin);
@@ -100,13 +110,13 @@ namespace TInventory.Container
         private void CreateContainerGroup(ContainerGroup containerGroup)
         {
             
-            var slotSize = TInventory.Inventory.Instance.slotSize;
-            var padding = TInventory.Inventory.Instance.padding;
-            var margin = TInventory.Inventory.Instance.margin;
+            var slotSize = Inventory.Instance.slotSize;
+            var padding = Inventory.Instance.padding;
+            var margin = Inventory.Instance.margin;
             
             var groupSize = slotSize + padding;
 
-            var slot = Instantiate(TInventory.Inventory.Instance.slotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
+            var slot = Instantiate(Inventory.Instance.slotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
 
             // Move group to correct slot position
             containerGroup.rectTransform.position += new Vector3(
@@ -140,7 +150,7 @@ namespace TInventory.Container
                     case 0: // Empty Slot
                         continue;
                     case 1: // Single Slot
-                        var group = Instantiate(TInventory.Inventory.Instance.containerGroupPrefab, rectTransform)
+                        var group = Instantiate(Inventory.Instance.containerGroupPrefab, rectTransform)
                             .GetComponent<ContainerGroup>();
                         
                         group.Init(slot, new Vector2(x, y), new Vector2(1, 1), this);
@@ -161,7 +171,7 @@ namespace TInventory.Container
                 }
                 else
                 {
-                    var group = Instantiate(TInventory.Inventory.Instance.containerGroupPrefab, rectTransform)
+                    var group = Instantiate(Inventory.Instance.containerGroupPrefab, rectTransform)
                         .GetComponent<ContainerGroup>();
                         
                     group.Init(slot, new Vector2(x, y), new Vector2(1, 1), this);
@@ -182,13 +192,13 @@ namespace TInventory.Container
         /// <returns>Returns slot x and y from Container where supplied position lies.</returns>
         public (Vector2 Slot, ContainerGroup ContainerGroup) GetSlotFromPosition(Vector3 position)
         {
-            var containerGroup = TInventory.Inventory.GetContainerGroup(position);
+            var containerGroup = Inventory.GetContainerGroupAt(position);
 
             if (containerGroup == null) return (new Vector2(-1, -1), null);
             
             position = containerGroup.rectTransform.position - position;
         
-            var size = TInventory.Inventory.Instance.slotSize;
+            var size = Inventory.Instance.slotSize;
 
             var slot = new Vector2(
                 -Mathf.Ceil(position.x / size),
@@ -238,9 +248,9 @@ namespace TInventory.Container
             
             item.slotPosition = slot;
 
-            var padding = TInventory.Inventory.Instance.padding / 2;
+            var padding = Inventory.Instance.padding / 2;
 
-            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * TInventory.Inventory.Instance.slotSize) + new Vector2(padding, -padding);
+            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.Instance.slotSize) + new Vector2(padding, -padding);
 
             item.transform.SetAsLastSibling();
         }
@@ -366,8 +376,6 @@ namespace TInventory.Container
                         if (CanPlaceItemAt(slot, containerGroup, item))
                         {
                             PlaceItemAt(slot, containerGroup, item);
-                        
-                            Debug.Log($"Placing Item at: {x}/{y}");
                             return true;
                         }
                     }

@@ -1,4 +1,7 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using TInventory.Container;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +14,22 @@ namespace TInventory.Window
         /// Toggle for if the window can be moved or not.
         /// </summary>
         public bool isLocked = false;
+
+        /// <summary>
+        /// If checked, any containers set in the currently added containers will be shown
+        /// </summary>
+        [SerializeField]
+        [Header("Settings")] 
+        private bool startWithContainers;
+
+        [SerializeField]
+        private List<ContainerData> startContainers = new List<ContainerData>();
         
+        /// <summary>
+        /// List of currently show containers
+        /// </summary>
+        private List<Container.Container> containers = new List<Container.Container>();
+
         /// <summary>
         /// Container Rect Transform.
         /// </summary>
@@ -32,6 +50,7 @@ namespace TInventory.Window
         [SerializeField]
         private VerticalLayoutGroup layoutGroup;
         
+        
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -39,18 +58,28 @@ namespace TInventory.Window
             windowContent.localPosition = Vector3.zero;
         }
 
-        public GameObject TestContent;
-        
-        // TEST METHOD
-        private void Update()
+        private void Start()
         {
-            if (Input.GetKeyDown(KeyCode.C))
+            InitializeStartContainers();
+        }
+
+        /// <summary>
+        /// TODO ADD SUMMARY
+        /// </summary>
+        private void InitializeStartContainers()
+        {
+            if (startWithContainers)
             {
-                var test = Instantiate(TestContent);
-                
-                AddContent(test);
+                foreach (var containerData in startContainers)
+                {
+
+                    Debug.Log(containerData);
+                    var container = Inventory.CreateNewContainer();
+                    container.Initialize(containerData);
+
+                    AddContent(container.GetComponent<RectTransform>());
+                }
             }
-            
         }
 
         /// <summary>
@@ -128,12 +157,13 @@ namespace TInventory.Window
             }
         }
 
-        // TODO ADD SUMMARY
-        public void AddContent(GameObject contentToAdd)
+        /// <summary>
+        /// Adds content to window
+        /// </summary>
+        /// <param name="contentToAdd"></param>
+        public void AddContent(RectTransform contentToAdd)
         {
-            var contentRect = contentToAdd.GetComponent<RectTransform>();
-            
-            if (contentRect is null)
+            if (contentToAdd is null)
             {
                 Debug.LogError("Can't add content without a RectTransform.");
                 return;
@@ -142,7 +172,7 @@ namespace TInventory.Window
             // Set content's parent to the window
             contentToAdd.transform.SetParent(windowContent);
             
-            IncreaseContentSize(contentRect.rect.height + layoutGroup.spacing);
+            IncreaseContentSize(contentToAdd.rect.height + layoutGroup.spacing);
         }
         
         /// <summary>

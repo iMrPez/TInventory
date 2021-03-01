@@ -1,16 +1,16 @@
-using System;
 using System.Linq;
+using Inventory.Item;
 using TInventory.Container;
 using UnityEngine;
 
-namespace Inventory.Item
+namespace TInventory.Item
 {
     public class ItemFactory : MonoBehaviour
     {
         /// <summary>
         /// Item factory singleton instance.
         /// </summary>
-        public static ItemFactory Instance;
+        public static ItemFactory instance;
 
         // TODO REDO prefab holding and instantiation.
         /// <summary>
@@ -20,28 +20,15 @@ namespace Inventory.Item
         private GameObject basicItemPrefab;
         
         /// <summary>
-        /// Weapon Prefab.
-        /// </summary>
-        [SerializeField]
-        private GameObject weaponPrefab;
-        
-        /// <summary>
         /// Basic item data.
         /// </summary>
         [SerializeField]
         private ItemData[] items;
-
         
-        /// <summary>
-        /// Weapon Item data.
-        /// </summary>
-        [SerializeField]
-        private WeaponItemData[] weapons;
-
 
         private void Awake()
         {
-            Instance = this;
+            instance = this;
         }
         
         /// <summary>
@@ -62,27 +49,7 @@ namespace Inventory.Item
             }
         }
 
-        
-        /// <summary>
-        /// Retrieve weapon by id.
-        /// </summary>
-        /// <param name="id">Weapon Id to lookup</param>
-        /// <returns>Returns Weapon if a weapon with supplied id is found</returns>
-        public WeaponItemData GetWeaponById(int id)
-        {
-            try
-            {
-                return weapons.First(i => i.itemData.id == id);
-            }
-            catch
-            {
-                Debug.LogError($"No weapon with ID({id} found!", this);
-                throw;
-            }
-            
-        }
 
-        
         /// <summary>
         /// Create basic items based on id.
         /// </summary>
@@ -110,26 +77,6 @@ namespace Inventory.Item
 
             return null;
         }
-        /// <summary>
-        /// Create weapon item based on id.
-        /// </summary>
-        /// <param name="id">Id of item to lookup</param>
-        /// <param name="container">Container the item will be contained in</param>
-        /// <returns>Returns initialized item</returns>
-        public WeaponItem CreateWeapon(int id, ContainerGroup containerGroup)
-        {
-            var weaponItemData = GetWeaponById(id);
 
-            if (weaponItemData != null)
-            {
-                var item = Instantiate(weaponPrefab).GetComponent<WeaponItem>();
-            
-                item.Initialize(weaponItemData, containerGroup);
-            }
-            
-            Debug.LogError($"Error Creating Item with ID({id}!", this);
-            
-            return null;
-        }
     }
 }
