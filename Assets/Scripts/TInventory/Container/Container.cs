@@ -33,6 +33,10 @@ namespace TInventory.Container
         /// </summary>
         private List<ContainerGroup> containerGroups;
 
+        public event ItemMovedDelegate ItemAddedHandler;
+
+        public event ItemMovedDelegate ItemRemovedHandler;
+        
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
@@ -48,28 +52,6 @@ namespace TInventory.Container
                     var item = ItemFactory.instance.CreateBasicItem(5);
                     if(!AddItem(item)) item.Destroy();
                 }
-                    
-
-                /*
-                var item = ItemFactory.Instance.CreateBasicItem(5);
-
-                var slotGroup = GetSlotFromPosition(Input.mousePosition);
-                
-                if (item != null && slotGroup.ContainerGroup != null)
-                {
-                    if (CanPlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup, item))
-                    {
-                        Debug.Log($"Placing {item} At {slotGroup.Slot}!", slotGroup.ContainerGroup);
-                        
-                        PlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup, item);
-                    }
-                    else
-                    {
-                        Debug.LogError("Item can't be placed!");
-                        Destroy(item.gameObject);
-                    }
-                }
-                */
             }
         }
 
@@ -253,9 +235,22 @@ namespace TInventory.Container
             item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.Instance.slotSize) + new Vector2(padding, -padding);
 
             item.transform.SetAsLastSibling();
+            
+            // Trigger Events
+            ItemMover.OnItemPlaced(item);
+            
+            OnItemAddedHandler(item);
+            
+            item.OnItemPlaced();
         }
 
-
+        public void RemoveItem(AItem item)
+        {
+            items.Remove(item);
+            OnItemRemovedHandler(item);
+        }
+        
+        
         /// <summary>
         /// Check if Slot exists in theContainer.
         /// </summary>
@@ -384,7 +379,15 @@ namespace TInventory.Container
 
             return false;
         }
-    }
 
-    // TODO ADD SUMMARY
+        protected virtual void OnItemAddedHandler(AItem item)
+        {
+            ItemAddedHandler?.Invoke(item);
+        }
+
+        protected virtual void OnItemRemovedHandler(AItem item)
+        {
+            ItemRemovedHandler?.Invoke(item);
+        }
+    }
 }

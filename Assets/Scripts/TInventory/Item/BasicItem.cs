@@ -1,4 +1,5 @@
 ﻿using System;
+using TInventory.Item;
 using TInventory.Item.Action;
 using UnityEngine;
 

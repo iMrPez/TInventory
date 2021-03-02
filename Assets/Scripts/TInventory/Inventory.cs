@@ -2,6 +2,7 @@
 using Inventory;
 using Inventory.Item;
 using TInventory.Container;
+using TInventory.Item;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;

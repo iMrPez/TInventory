@@ -1,12 +1,14 @@
-using System;
 using System.Collections.Generic;
+using Inventory.Item;
 using TInventory.Container;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Inventory.Item
+namespace TInventory.Item
 {
+        public delegate void ItemMovedDelegate(AItem item);
+        
         /// <summary>
         /// Item abstract class, used to add basic functionality to item.
         /// </summary>
@@ -79,6 +81,10 @@ namespace Inventory.Item
                 /// </summary>
                 /// <returns>Returns true if the item has been rotated.</returns>
                 public bool IsRotated() => isRotated;
+
+                public event ItemMovedDelegate ItemPlacedHandler;
+
+                public event ItemMovedDelegate ItemPickedUpHandler;
                 
                 private void Awake()
                 {
@@ -185,14 +191,25 @@ namespace Inventory.Item
                 /// </summary>
                 /// <returns>Item's count</returns>
                 public virtual int GetCount() => count;
-
+                
+                
                 /// <summary>
                 /// Destroy the item.
                 /// </summary>
                 public void Destroy()
                 {
-                        containerGroup?.parentContainer.items.Remove(this);
+                        containerGroup?.parentContainer.RemoveItem(this);
                         Destroy(gameObject);
+                }
+
+                public virtual void OnItemPlaced()
+                {
+                        ItemPlacedHandler?.Invoke(this);
+                }
+
+                public virtual void OnItemPickedUp()
+                {
+                        ItemPickedUpHandler?.Invoke(this);
                 }
         }
 }

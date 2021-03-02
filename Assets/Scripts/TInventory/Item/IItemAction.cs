@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Inventory.Item
+namespace TInventory.Item
 {
     public interface IItemAction
     {

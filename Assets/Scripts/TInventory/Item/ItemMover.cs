@@ -1,6 +1,7 @@
 using System.Collections;
 using Inventory.Item;
 using TInventory.Container;
+using TInventory.Item;
 using UnityEngine;
 
 namespace TInventory
@@ -66,6 +67,11 @@ namespace TInventory
 
         private Vector3 clickedPosition = Vector3.zero;
         
+        public static event ItemMovedDelegate ItemPlacedHandler;
+
+        public static event ItemMovedDelegate ItemPickedUpHandler;
+        
+        
         private void Update()
         {
 
@@ -117,10 +123,14 @@ namespace TInventory
             if (!(clickedItem is null))
             {
                 heldItem = clickedItem;
+                // Trigger events
+                heldItem.OnItemPickedUp();
+                OnItemPickedUp(heldItem);
+                
                 startPos = clickedItem.slotPosition;
                 startContainerGroup = clickedItem.containerGroup;
                 startRotation = clickedItem.IsRotated();
-                clickedItem.containerGroup.parentContainer.items.Remove(clickedItem);
+                clickedItem.containerGroup.parentContainer.RemoveItem(clickedItem);
                 
                 StartCoroutine(HoldItem());
             }
@@ -247,6 +257,15 @@ namespace TInventory
             heldItem = null;
         }
 
-        
+
+        public static void OnItemPlaced(AItem item)
+        {
+            ItemPlacedHandler?.Invoke(item);
+        }
+
+        public static void OnItemPickedUp(AItem item)
+        {
+            ItemPickedUpHandler?.Invoke(item);
+        }
     }
 }

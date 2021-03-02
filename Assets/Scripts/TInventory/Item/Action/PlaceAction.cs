@@ -8,7 +8,7 @@ namespace TInventory.Item.Action
         
         public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
-            var containerAtTouch = TInventory.Inventory.GetContainerAt(Input.mousePosition);
+            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
 
             if (containerAtTouch is null) return false;
             
