@@ -72,8 +72,6 @@ namespace TInventory.Window
             {
                 foreach (var containerData in startContainers)
                 {
-
-                    Debug.Log(containerData);
                     var container = Inventory.CreateNewContainer();
                     container.Initialize(containerData);
 
