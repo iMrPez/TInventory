@@ -109,7 +109,7 @@ namespace TInventory
             if (InputHandler.GetPrimaryButton())
             {
                 return (Time.time - lastTouchTime > touchHoldTime || 
-                        Vector3.Distance(Input.mousePosition, clickedPosition) > Inventory.instance.slotSize / 2);
+                        Vector3.Distance(Input.mousePosition, clickedPosition) > Inventory.Instance.slotSize / 2);
             }
             
             return false;
@@ -172,7 +172,7 @@ namespace TInventory
         {
             heldItem.transform.position = (Vector2) Input.mousePosition;
 
-            heldItem.transform.SetParent(Inventory.instance.transform);
+            heldItem.transform.SetParent(Inventory.Instance.transform);
             heldItem.transform.SetAsLastSibling();
 
             releasedAction = null;

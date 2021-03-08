@@ -70,11 +70,11 @@ namespace TInventory.Container
         {
             ClearItems();
 
-            var slotSize = Inventory.instance.slotSize;
+            var slotSize = Inventory.Instance.slotSize;
 
-            var padding = Inventory.instance.padding;
+            var padding = Inventory.Instance.padding;
 
-            var margin = Inventory.instance.margin;
+            var margin = Inventory.Instance.margin;
 
             rectTransform.sizeDelta = new Vector2( (containerData.Width * (slotSize + padding + margin)) + margin,
                 (containerData.Height * (slotSize + padding + margin)) + margin);
@@ -92,13 +92,13 @@ namespace TInventory.Container
         private void CreateContainerGroup(ContainerGroup containerGroup)
         {
             
-            var slotSize = Inventory.instance.slotSize;
-            var padding = Inventory.instance.padding;
-            var margin = Inventory.instance.margin;
+            var slotSize = Inventory.Instance.slotSize;
+            var padding = Inventory.Instance.padding;
+            var margin = Inventory.Instance.margin;
             
             var groupSize = slotSize + padding;
 
-            var slot = Instantiate(Inventory.instance.slotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
+            var slot = Instantiate(Inventory.Instance.slotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
 
             // Move group to correct slot position
             containerGroup.rectTransform.position += new Vector3(
@@ -132,7 +132,7 @@ namespace TInventory.Container
                     case 0: // Empty Slot
                         continue;
                     case 1: // Single Slot
-                        var group = Instantiate(Inventory.instance.containerGroupPrefab, rectTransform)
+                        var group = Instantiate(Inventory.Instance.containerGroupPrefab, rectTransform)
                             .GetComponent<ContainerGroup>();
                         
                         group.Init(slot, new Vector2(x, y), new Vector2(1, 1), this);
@@ -153,7 +153,7 @@ namespace TInventory.Container
                 }
                 else
                 {
-                    var group = Instantiate(Inventory.instance.containerGroupPrefab, rectTransform)
+                    var group = Instantiate(Inventory.Instance.containerGroupPrefab, rectTransform)
                         .GetComponent<ContainerGroup>();
                         
                     group.Init(slot, new Vector2(x, y), new Vector2(1, 1), this);
@@ -180,7 +180,7 @@ namespace TInventory.Container
             
             position = containerGroup.rectTransform.position - position;
         
-            var size = Inventory.instance.slotSize;
+            var size = Inventory.Instance.slotSize;
 
             var slot = new Vector2(
                 -Mathf.Ceil(position.x / size),
@@ -230,9 +230,9 @@ namespace TInventory.Container
             
             item.slotPosition = slot;
 
-            var padding = Inventory.instance.padding / 2;
+            var padding = Inventory.Instance.padding / 2;
 
-            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.instance.slotSize) + new Vector2(padding, -padding);
+            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.Instance.slotSize) + new Vector2(padding, -padding);
 
             item.transform.SetAsLastSibling();
             

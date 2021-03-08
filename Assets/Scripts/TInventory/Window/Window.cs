@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TInventory.Container;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +13,7 @@ namespace TInventory.Window
         /// <summary>
         /// Toggle for if the window can be moved or not.
         /// </summary>
-        private bool isLocked = false;
+        public bool isLocked = false;
 
         /// <summary>
         /// If checked, any containers set in the currently added containers will be shown
@@ -50,9 +49,7 @@ namespace TInventory.Window
 
         [SerializeField]
         private VerticalLayoutGroup layoutGroup;
-
-        [SerializeField] 
-        private TextMeshProUGUI titleText;
+        
         
         private void Awake()
         {
@@ -88,19 +85,13 @@ namespace TInventory.Window
         /// </summary>
         /// <returns>Return Container's RectTransform.</returns>
         public RectTransform GetRect() => rectTransform;
-
-        // TODO ADD SUMMARY
-        public void SetWindowTitle(string text)
-        {
-            titleText.text = text;
-        }
         
         /// <summary>
         /// Sets the size of the window.
         /// </summary>
         /// <param name="width">Width</param>
         /// <param name="height">Height</param>
-        public void SetWindowSize(float width, float height)
+        private void SetWindowSize(float width, float height)
         {
             rectTransform.sizeDelta = new Vector2(width, height);
         }
@@ -109,8 +100,8 @@ namespace TInventory.Window
         {
             windowContent.sizeDelta = new Vector2(width, height);
         }
-
-        public bool IsLocked() => isLocked;
+        
+        // TODO make auto sizing.
         
         // TODO ADD SUMMARY
         private void IncreaseContentSize(float height)
@@ -128,7 +119,7 @@ namespace TInventory.Window
             SetWindowSize(newSize.x, newSize.y);
         }
 
-        private void HeaderClicked()
+        public void HeaderClicked()
         {
             Debug.Log("Header Clicked!");
             StartCoroutine(DraggingHeader());
@@ -152,15 +143,15 @@ namespace TInventory.Window
                 scrollView.viewport.transform.position.y - Input.mousePosition.y,
                 scrollView.viewport.rect.height);
 
-            if (value > TInventory.Inventory.instance.scrollDownAt)
+            if (value > TInventory.Inventory.Instance.scrollDownAt)
             {
                 scrollView.verticalNormalizedPosition =
-                    Mathf.Clamp01(scrollView.verticalNormalizedPosition - TInventory.Inventory.instance.scrollSpeed * Time.deltaTime);
+                    Mathf.Clamp01(scrollView.verticalNormalizedPosition - TInventory.Inventory.Instance.scrollSpeed * Time.deltaTime);
             }
-            else if (value < TInventory.Inventory.instance.scrollUpAt)
+            else if (value < TInventory.Inventory.Instance.scrollUpAt)
             {
                 scrollView.verticalNormalizedPosition =
-                    Mathf.Clamp01(scrollView.verticalNormalizedPosition + TInventory.Inventory.instance.scrollSpeed * Time.deltaTime);
+                    Mathf.Clamp01(scrollView.verticalNormalizedPosition + TInventory.Inventory.Instance.scrollSpeed * Time.deltaTime);
             }
         }
 
