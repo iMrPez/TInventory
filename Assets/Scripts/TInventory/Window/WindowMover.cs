@@ -8,19 +8,24 @@ namespace TInventory.Window
         
         void Update()
         {
+            TryMoveWindow();
+        }
+
+        private void TryMoveWindow()
+        {
             if (Input.GetMouseButtonDown(0))
             {
                 var windowHeaderObject = Inventory.GetWindowHeaderAtMousePosition();
 
-                var window = windowHeaderObject?.transform.parent;
+                var window = windowHeaderObject?.transform.parent.GetComponent<Window>();
 
-                if (window is null) return;
+                if (window is null || window.IsLocked()) return;
 
-                StartCoroutine(MoveWindowToMouse(window, window.position - Input.mousePosition));
+                StartCoroutine(MoveWindowToMouse(window.transform, window.transform.position - Input.mousePosition));
             }
         }
 
-        
+
         /// <summary>
         /// Moves window to mouse position
         /// </summary>
