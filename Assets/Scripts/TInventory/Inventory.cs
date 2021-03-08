@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Inventory;
 using Inventory.Item;
 using TInventory.Container;
@@ -11,15 +12,19 @@ namespace TInventory
 {
     public class Inventory : MonoBehaviour
     {
-        public static Inventory Instance;
+        public static Inventory instance;
+
+        // TODO ADD SUMMARY
+        [Header("Prefabs")] 
+        [SerializeField] 
+        private GameObject windowPrefab;
         
         /// <summary>
         /// Container prefab;
         /// </summary>
-        [Header("Prefabs")]
         [SerializeField]
         private GameObject containerPrefab;
-        
+
         /// <summary>
         /// Slot prefab;
         /// </summary>
@@ -37,8 +42,9 @@ namespace TInventory
         /// </summary>
         [SerializeField]
         public GameObject itemPrefab;
-        
-        [Header("Window")]
+
+        [Header("Window")] 
+        public Transform windowContainer;
         public float scrollDownAt;
         public float scrollUpAt;
         public float scrollSpeed;
@@ -62,13 +68,20 @@ namespace TInventory
         
         private void Awake()
         {
-            Instance = this;
+            instance = this;
             
             Raycaster = GetComponent<GraphicRaycaster>();
             
             PointerEventData = new PointerEventData(eventSystem);
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                Test();
+            }
+        }
 
         /// <summary>
         /// Gets the hit objects from raycast
@@ -89,11 +102,30 @@ namespace TInventory
             return results;
         }
 
+        // TODO ADD SUMMARY
         public static Container.Container CreateNewContainer()
         {
-            var container = Instantiate(Instance.containerPrefab).GetComponent<Container.Container>();
+            var container = Instantiate(instance.containerPrefab).GetComponent<Container.Container>();
 
             return container;
+        }
+
+        // TODO REMOVE TESTING METHOD
+        
+        public void Test()
+        {
+            CreateNewWindow("Test Window", new Vector2(500, 500));
+        }
+        
+        // TODO ADD SUMMARY
+        public static Window.Window CreateNewWindow(string title, Vector2 windowSize)
+        {
+            var window = Instantiate(instance.windowPrefab, instance.windowContainer).GetComponent<Window.Window>();
+            
+            window.SetWindowTitle(title);
+            window.SetWindowSize(windowSize.x, windowSize.y);
+
+            return window;
         }
         
 

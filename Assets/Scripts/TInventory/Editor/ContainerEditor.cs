@@ -55,7 +55,7 @@ namespace TInventory.Editor
             
             if (GUILayout.Button("Set To Group"))
             {
-                SetToGroup(containerData, groupNumber);
+                SetToGroup(container, groupNumber);
             }
             
             EditorGUILayout.EndHorizontal();
@@ -83,12 +83,12 @@ namespace TInventory.Editor
             newContainerSize.y = newContainerSize.y < 1 ? 1 : newContainerSize.y;
         }
 
-        private static void SetToGroup(ContainerData containerData, int group)
+        private static void SetToGroup(int[,] containerToModify, int group)
         {
-            for (int x = 0; x < containerData.Width; x++)
-            for (int y = 0; y < containerData.Height; y++)
+            for (int x = 0; x < containerToModify.GetLength(0); x++)
+            for (int y = 0; y < containerToModify.GetLength(1); y++)
             {
-                containerData.Container[x, y] = group;
+                containerToModify[x, y] = group;
             }
         }
 

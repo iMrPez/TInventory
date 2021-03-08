@@ -157,7 +157,7 @@ namespace TInventory.Item
                 {
                         size = itemSize;
                         
-                        var slotSize = TInventory.Inventory.Instance.slotSize;
+                        var slotSize = TInventory.Inventory.instance.slotSize;
                         RectTransform.sizeDelta = new Vector2(slotSize * itemSize.x, slotSize * itemSize.y);
                 }
                 
