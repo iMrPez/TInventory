@@ -1,9 +1,6 @@
-﻿using System;
-using TInventory.Item;
-using TInventory.Item.Action;
-using UnityEngine;
+﻿using TInventory.Item.Action;
 
-namespace Inventory.Item
+namespace TInventory.Item
 {
     /// <summary>
     /// Basic misc item that can be stacked.
@@ -23,6 +20,7 @@ namespace Inventory.Item
             // Add inventory release actions
             itemReleaseActions.Add(new PlaceAction());
             itemReleaseActions.Add(new StackAction());
+            itemReleaseActions.Add(new AttachAction());
         }
     }
 }

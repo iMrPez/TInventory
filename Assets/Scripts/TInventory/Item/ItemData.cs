@@ -24,6 +24,11 @@ namespace Inventory.Item
         /// Item's image
         /// </summary>
         public Sprite image;
+
+        /// <summary>
+        /// Max size the image can be stretched to.
+        /// </summary>
+        public Vector2 maxImageSize;
         
         /// <summary>
         /// Item's size * slot size

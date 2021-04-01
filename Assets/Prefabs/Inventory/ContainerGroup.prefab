@@ -88,7 +88,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fcb60902ead47b19d617cd7b35ca34c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  group: 0
+  id: 0
   position: {x: 0, y: 0}
   size: {x: 0, y: 0}
+  parentContainer: {fileID: 0}
   rectTransform: {fileID: 0}

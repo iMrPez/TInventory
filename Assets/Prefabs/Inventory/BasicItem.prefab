@@ -360,12 +360,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 0}
-  sprite: {fileID: 0}
   size: {x: 0, y: 0}
   slotPosition: {x: 0, y: 0}
-  iconRenderer: {fileID: 4747291460860789151}
+  containerGroup: {fileID: 0}
+  defaultColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 0.39215687}
+  iconImage: {fileID: 4747291460860789151}
+  iconRect: {fileID: 0}
   itemNameText: {fileID: 1667375863}
   itemCountText: {fileID: 529944165}
+  rectTransform: {fileID: 0}
 --- !u!1 &4747291460860789153
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,10 +401,10 @@ RectTransform:
   m_Father: {fileID: 4747291459301666436}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 192, y: 60}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4747291460860789150
 CanvasRenderer:

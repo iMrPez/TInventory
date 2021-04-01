@@ -10,6 +10,7 @@ TagManager:
   - Window
   - ContainerGroup
   - WindowHeader
+  - AttachSlot
   layers:
   - Default
   - TransparentFX

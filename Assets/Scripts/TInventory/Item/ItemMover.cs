@@ -124,14 +124,16 @@ namespace TInventory
             {
                 heldItem = clickedItem;
                 // Trigger events
-                heldItem.OnItemPickedUp();
-                OnItemPickedUp(heldItem);
-                
+                ItemPickedUpHandler?.Invoke(heldItem);
+
                 startPos = clickedItem.slotPosition;
                 startContainerGroup = clickedItem.containerGroup;
                 startRotation = clickedItem.IsRotated();
-                clickedItem.containerGroup.parentContainer.RemoveItem(clickedItem);
-                
+
+                clickedItem.containerGroup?.parentContainer.RemoveItem(clickedItem);
+
+                clickedItem.attachedSlot?.Detach(clickedItem);
+
                 StartCoroutine(HoldItem());
             }
         }
@@ -152,8 +154,10 @@ namespace TInventory
                 {
                     containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
 
-                    Inventory.GetWindowAtMousePosition().UpdateViewport();
-                    
+                    var window = Inventory.GetWindowAtMousePosition();
+
+                    window?.UpdateViewport();
+
                     itemAtTouch = Inventory.GetItemAt(Input.mousePosition, heldItem.gameObject);
 
                     UpdateHeldItem(containerAtTouch, itemAtTouch);
@@ -210,6 +214,10 @@ namespace TInventory
                 {
                     ReturnHeldItem();
                 }
+                else
+                {
+                    ItemPlacedHandler?.Invoke(heldItem);
+                }
             }
             else
             {
@@ -217,7 +225,7 @@ namespace TInventory
             }
             
             // Reset background color
-            heldItem.SetBackgroundColor(defaultColor);
+            //heldItem.SetBackgroundColor(defaultColor);
 
             ResetHold();
         }
@@ -245,8 +253,20 @@ namespace TInventory
         /// </summary>
         private void ReturnHeldItem()
         {
-            heldItem.containerGroup.parentContainer.PlaceItemAt(startPos, startContainerGroup, heldItem);
+            
+            // Rotate to original rotation before grabbing
             if (startRotation != heldItem.IsRotated()) heldItem.Rotate();
+
+            if (!(heldItem.attachedSlot is null))
+            {
+                heldItem.attachedSlot.Attach(heldItem);
+            }
+            else if (!(heldItem.containerGroup is null))
+            {
+                heldItem.containerGroup.parentContainer.PlaceItemAt(startPos, startContainerGroup, heldItem);
+            }
+            
+            ItemPlacedHandler?.Invoke(heldItem);
         }
 
         /// <summary>
@@ -256,16 +276,6 @@ namespace TInventory
         {
             heldItem = null;
         }
-
-
-        public static void OnItemPlaced(AItem item)
-        {
-            ItemPlacedHandler?.Invoke(item);
-        }
-
-        public static void OnItemPickedUp(AItem item)
-        {
-            ItemPickedUpHandler?.Invoke(item);
-        }
+        
     }
 }

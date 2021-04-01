@@ -4,6 +4,11 @@ namespace TInventory
 {
     public static class InputHandler
     {
+        public static Vector3 GetCursorPosition()
+        {
+            return Input.mousePosition;
+        }
+        
         public static bool GetPrimaryButtonDown()
         {
             return Input.GetMouseButtonDown(0);

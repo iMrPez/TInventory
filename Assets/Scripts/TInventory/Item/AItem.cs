@@ -12,7 +12,7 @@ namespace TInventory.Item
         /// <summary>
         /// Item abstract class, used to add basic functionality to item.
         /// </summary>
-        [RequireComponent(typeof(Image))]
+        [RequireComponent(typeof(Image), typeof(RectTransform))]
         public abstract class AItem : MonoBehaviour
         {
                 /// <summary>
@@ -37,6 +37,10 @@ namespace TInventory.Item
                 private int count;
 
                 public ContainerGroup containerGroup;
+
+                public AttachSlot.AttachSlot attachedSlot;
+                
+                public Color defaultColor;
                 
                 /// <summary>
                 /// List of possible actions to be performed when item is released 
@@ -46,9 +50,14 @@ namespace TInventory.Item
                 /// <summary>
                 /// UI - Icon to display the items sprite.
                 /// </summary>
-                [SerializeField] 
-                private Image iconRenderer;
+                public Image iconImage;
 
+                /// <summary>
+                /// UI - Icon RectTransform
+                /// </summary>
+                [HideInInspector]
+                public RectTransform iconRect;
+                
                 /// <summary>
                 /// UI - Items name text field.
                 /// </summary>
@@ -64,7 +73,7 @@ namespace TInventory.Item
                 /// <summary>
                 /// Items RectTransform.
                 /// </summary>
-                private RectTransform RectTransform;
+                public RectTransform rectTransform;
                 
                 /// <summary>
                 /// Items background.
@@ -82,16 +91,15 @@ namespace TInventory.Item
                 /// <returns>Returns true if the item has been rotated.</returns>
                 public bool IsRotated() => isRotated;
 
-                public event ItemMovedDelegate ItemPlacedHandler;
-
-                public event ItemMovedDelegate ItemPickedUpHandler;
-                
                 private void Awake()
                 {
-                        RectTransform = GetComponent<RectTransform>();
+                        rectTransform = GetComponent<RectTransform>();
                         background = GetComponent<Image>();
+                        iconRect = iconImage.GetComponent<RectTransform>();
                 }
 
+                
+                
                 /// <summary>
                 /// Sets the item data with the supplied item data.
                 /// </summary>
@@ -103,9 +111,9 @@ namespace TInventory.Item
                         
                         SetName(itemData.itemName);
 
-                        SetItemSize(itemData.size);
+                        SetItemSizeBySlots(itemData.size);
 
-                        iconRenderer.sprite = itemData.image;
+                        iconImage.sprite = itemData.image;
 
                         this.containerGroup = containerGroup;
                 }
@@ -144,21 +152,37 @@ namespace TInventory.Item
                 /// </summary>
                 public void Rotate()
                 {
-                        SetItemSize(new Vector2(size.y, size.x));
-                        iconRenderer.transform.Rotate(new Vector3(0,0, isRotated? -90 : 90));
+                        SetItemSizeBySlots(new Vector2(size.y, size.x));
+                        iconImage.transform.Rotate(new Vector3(0,0, isRotated? -90 : 90));
                         isRotated = !isRotated;
                 }
+
 
                 /// <summary>
                 /// Sets the item's size.
                 /// </summary>
                 /// <param name="itemSize">Size to set item to.</param>
-                private void SetItemSize(Vector2 itemSize)
+                public Vector2 SetItemSizeBySlots(Vector2 itemSize)
                 {
+                        var oldSize = size;
                         size = itemSize;
                         
                         var slotSize = TInventory.Inventory.instance.slotSize;
-                        RectTransform.sizeDelta = new Vector2(slotSize * itemSize.x, slotSize * itemSize.y);
+                        rectTransform.sizeDelta = new Vector2(slotSize * itemSize.x, slotSize * itemSize.y);
+                        return oldSize;
+                }
+                
+                /// <summary>
+                /// Sets the item's size.
+                /// </summary>
+                /// <param name="itemSize">Size to set item to.</param>
+                public Vector2 SetItemSize(Vector2 itemSize)
+                {
+                        var oldSize = size;
+                        size = itemSize;
+ 
+                        rectTransform.sizeDelta = itemSize;
+                        return oldSize;
                 }
                 
                 
@@ -166,9 +190,17 @@ namespace TInventory.Item
                 /// Sets the items background color.
                 /// </summary>
                 /// <param name="color">Color to set background to.</param>
-                public virtual void SetBackgroundColor(Color color)
+                public virtual Color SetBackgroundColor(Color color)
                 {
+                        var oldColor = background.color;
                         background.color = color;
+
+                        return oldColor;
+                }
+
+                public virtual void ResetColor()
+                {
+                        SetBackgroundColor(defaultColor);
                 }
 
                 /// <summary>
@@ -191,6 +223,22 @@ namespace TInventory.Item
                 /// </summary>
                 /// <returns>Item's count</returns>
                 public virtual int GetCount() => count;
+
+
+                public void SetImageModeToCenter()
+                {
+                        var centerPoint = new Vector2(0.5f, 0.5f);
+                        iconRect.anchoredPosition = centerPoint;
+                        iconRect.anchorMin = centerPoint;
+                        iconRect.anchorMax = centerPoint;
+                }
+                
+                public void SetImageModeToFit()
+                {
+                        iconRect.anchoredPosition = new Vector2(0.5f, 0.5f);
+                        iconRect.anchorMin = Vector2.zero;
+                        iconRect.anchorMax = Vector2.one;
+                }
                 
                 
                 /// <summary>
@@ -200,16 +248,6 @@ namespace TInventory.Item
                 {
                         containerGroup?.parentContainer.RemoveItem(this);
                         Destroy(gameObject);
-                }
-
-                public virtual void OnItemPlaced()
-                {
-                        ItemPlacedHandler?.Invoke(this);
-                }
-
-                public virtual void OnItemPickedUp()
-                {
-                        ItemPickedUpHandler?.Invoke(this);
                 }
         }
 }

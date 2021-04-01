@@ -5,7 +5,6 @@ namespace TInventory.Item.Action
 {
     public class PlaceAction : IItemAction
     {
-        
         public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
@@ -20,7 +19,7 @@ namespace TInventory.Item.Action
 
         public bool Act(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
-            var containerAtTouch = TInventory.Inventory.GetContainerAt(Input.mousePosition);
+            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
             
             if (containerAtTouch is null || heldItem is null) return false;
             
@@ -28,6 +27,8 @@ namespace TInventory.Item.Action
             
             containerAtTouch.PlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup, heldItem);
 
+            heldItem.ResetColor();
+            
             return true;
         }
 

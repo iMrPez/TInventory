@@ -43,6 +43,8 @@ namespace TInventory
         [SerializeField]
         public GameObject itemPrefab;
 
+        public Canvas inventoryCanvas;
+        
         [Header("Window")] 
         public Transform windowContainer;
         public float scrollDownAt;
@@ -161,6 +163,22 @@ namespace TInventory
                 if (result.gameObject.CompareTag("ContainerGroup"))
                 {
                     return result.gameObject.GetComponent<ContainerGroup>();
+                }
+            }
+            
+            return null;
+        }
+        
+        
+        // TODO add summary
+        public static AttachSlot.AttachSlot GetActionSlotAt(Vector3 position)
+        {
+            //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
+            foreach (RaycastResult result in GetRaycastResults(position))
+            {
+                if (result.gameObject.CompareTag("AttachSlot"))
+                {
+                    return result.gameObject.GetComponent<AttachSlot.AttachSlot>();
                 }
             }
             
