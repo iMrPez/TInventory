@@ -11,16 +11,20 @@ namespace TInventory.Window
     public class Window : MonoBehaviour
     {
 
+
         /// <summary>
         /// Toggle for if the window can be moved or not.
         /// </summary>
         private bool isLocked = false;
 
+        
+        [Header("Settings")] 
+        public bool hideWindowOnClose = false;
+        
         /// <summary>
         /// If checked, any containers set in the currently added containers will be shown
         /// </summary>
         [SerializeField]
-        [Header("Settings")] 
         private bool startWithContainers;
 
         [SerializeField]
@@ -128,9 +132,9 @@ namespace TInventory.Window
             SetWindowSize(newSize.x, newSize.y);
         }
 
-        private void HeaderClicked()
+        /*private void HeaderClicked()
         {
-            Debug.Log("Header Clicked!");
+            transform.SetAsFirstSibling();
             StartCoroutine(DraggingHeader());
         }
 
@@ -141,7 +145,7 @@ namespace TInventory.Window
                 Debug.Log("Testin");
                 yield return null;
             }
-        }
+        }*/
         
         /// <summary>
         /// Moves the container's viewport if an item is being held near and edge of the viewport.
@@ -189,6 +193,24 @@ namespace TInventory.Window
         public void SetLock(bool value)
         {
             isLocked = value;
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void Close()
+        {
+            if (!hideWindowOnClose)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                Hide();
+            }
+            
         }
         
         /// <summary>

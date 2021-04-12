@@ -5,6 +5,7 @@ namespace TInventory.Item.Action
 {
     public class StackAction : IItemAction
     {
+        
         public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             if (heldItem is null || itemAtTouch is null) return false;

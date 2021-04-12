@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 5
   itemName: Cigarettes
+  itemType: {fileID: 11400000, guid: ef7b603071ce15f46be4ca1fe48446b3, type: 2}
   description: 
   image: {fileID: 21300000, guid: a6f2b48d38b0bdd438e97871880d7d2e, type: 3}
   maxImageSize: {x: 80, y: 80}

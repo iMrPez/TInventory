@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using TInventory.ContextMenu.Action;
+using TInventory.Item;
+using UnityEngine;
 
 namespace Inventory.Item
 {
@@ -14,6 +17,8 @@ namespace Inventory.Item
         /// Item name
         /// </summary>
         public string itemName;
+
+        public ItemType itemType;
         
         /// <summary>
         /// Item description

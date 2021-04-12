@@ -55,6 +55,9 @@ namespace TInventory
         public float padding;
         public float margin;
         public float slotSize;
+
+        [Header("Context Menu")] 
+        public ContextMenu.ContextMenu contextMenu;
         
         public ContainerData testContainerData; // TODO REMOVE! ONLY FOR TESTING
         
@@ -75,14 +78,6 @@ namespace TInventory
             Raycaster = GetComponent<GraphicRaycaster>();
             
             PointerEventData = new PointerEventData(eventSystem);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                Test();
-            }
         }
 
         /// <summary>
@@ -111,13 +106,6 @@ namespace TInventory
 
             return container;
         }
-
-        // TODO REMOVE TESTING METHOD
-        
-        public void Test()
-        {
-            CreateNewWindow("Test Window", new Vector2(500, 500));
-        }
         
         // TODO ADD SUMMARY
         public static Window.Window CreateNewWindow(string title, Vector2 windowSize)
@@ -142,6 +130,8 @@ namespace TInventory
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
             {
+                if (result.gameObject.CompareTag("Window")) break;
+                
                 if (result.gameObject.CompareTag("Item"))
                 {
                     if (result.gameObject != ignoreItem)
@@ -160,6 +150,8 @@ namespace TInventory
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
             {
+                if (result.gameObject.CompareTag("Window")) break;
+                
                 if (result.gameObject.CompareTag("ContainerGroup"))
                 {
                     return result.gameObject.GetComponent<ContainerGroup>();
@@ -176,6 +168,8 @@ namespace TInventory
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
             {
+                if (result.gameObject.CompareTag("Window")) break;
+                
                 if (result.gameObject.CompareTag("AttachSlot"))
                 {
                     return result.gameObject.GetComponent<AttachSlot.AttachSlot>();
@@ -195,6 +189,8 @@ namespace TInventory
             //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
             foreach (RaycastResult result in GetRaycastResults(position))
             {
+                if (result.gameObject.CompareTag("Window")) break;
+                
                 if (result.gameObject.CompareTag("Container"))
                 {
                     return result.gameObject.GetComponent<global::TInventory.Container.Container>();

@@ -7,7 +7,7 @@ using UnityEngine;
 namespace TInventory.Editor
 {
     [CustomEditor(typeof(ContainerData))]
-    public class ContainerEditor : UnityEditor.Editor
+    public class ContainerDataEditor : UnityEditor.Editor
     {
 
         public int[,] container;
@@ -17,6 +17,8 @@ namespace TInventory.Editor
         bool show;
         
         int groupNumber;
+
+        private SerializedProperty filterProperty;
         
         public void OnEnable()
         {
@@ -25,6 +27,8 @@ namespace TInventory.Editor
             container = containerData.Container;
             
             newContainerSize = new Vector2Int((int) containerData.Width, (int) containerData.Height);
+
+            filterProperty = serializedObject.FindProperty("filter");
         }
 
         public override void OnInspectorGUI()
@@ -33,6 +37,8 @@ namespace TInventory.Editor
             ContainerData containerData = (ContainerData)target;
 
             containerData.containerName = EditorGUILayout.TextField("Container Name", containerData.containerName);
+
+            EditorGUILayout.PropertyField(filterProperty, new GUIContent("Filter"));
             
             EditorGUILayout.Separator();
             
@@ -73,6 +79,8 @@ namespace TInventory.Editor
                 containerData.SetContainer(container);
                 Debug.Log("Container data saved!");
             }
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         private void DisplayContainerSize()

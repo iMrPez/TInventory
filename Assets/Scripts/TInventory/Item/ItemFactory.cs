@@ -1,7 +1,12 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Inventory.Item;
 using TInventory.Container;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = System.Random;
 
 namespace TInventory.Item
 {
@@ -23,7 +28,7 @@ namespace TInventory.Item
         /// Basic item data.
         /// </summary>
         [SerializeField]
-        private ItemData[] items;
+        private List<ItemData> items;
         
 
         private void Awake()
@@ -59,10 +64,15 @@ namespace TInventory.Item
         public BasicItem CreateBasicItem(int id)
         {
             var itemData = GetItemById(id);
-            
+
+            return CreateBasicItem(itemData);
+        }
+        
+        public BasicItem CreateBasicItem(ItemData itemData)
+        {
             if (itemData != null)
             {
-                Debug.Log($"Item({id}) Created - {itemData}", itemData);
+                Debug.Log($"Item({itemData.id}) Created - {itemData}", itemData);
                 
                 var item = Instantiate(basicItemPrefab).GetComponent<BasicItem>();
             
@@ -73,10 +83,39 @@ namespace TInventory.Item
                 return item;
             }
 
-            Debug.LogError($"Error Creating Item with ID({id}!", this);
+            Debug.LogError($"Error Creating Item with ID({itemData.id}!", this);
 
             return null;
         }
 
+        public static IEnumerable<(ItemData item, float rarity)> GetFilteredItemList(Filter.Filter filter)
+        {
+            foreach (var item in instance.items)
+            {
+                var rarity = filter.allowedCategory.GetRarity(item);
+                
+                if (rarity > 0)
+                {
+                    yield return (item, rarity);
+                }
+            }
+        }
+
+        public static ItemData GetRandomItemFromList(List<(ItemData item, float rarity)> items)
+        {
+            var totalRarity = items.Sum(x => x.rarity);
+            
+            var randomNumber = 1 + Math.Round(new Random(DateTime.Now.Millisecond).NextDouble() * (totalRarity - 1));
+
+            var item = items.OrderBy(x => x.item.id).Select(x => new
+            {
+                x.item,
+                
+                MinRarity = items.Where(y => y.item.id <= x.item.id).Sum(y => y.rarity) - x.rarity + 1,
+                MaxRarity = items.Where(y => y.item.id <= x.item.id).Sum(y => y.rarity)
+            }).Single(x => x.MinRarity <= randomNumber && x.MaxRarity >= randomNumber);
+
+            return item.item;
+        }
     }
 }

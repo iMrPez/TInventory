@@ -1,4 +1,5 @@
-﻿using TInventory.Item.Action;
+﻿using TInventory.ContextMenu.Action;
+using TInventory.Item.Action;
 
 namespace TInventory.Item
 {
@@ -21,6 +22,9 @@ namespace TInventory.Item
             itemReleaseActions.Add(new PlaceAction());
             itemReleaseActions.Add(new StackAction());
             itemReleaseActions.Add(new AttachAction());
+            
+            // Add Context Menu Options
+            contextMenuActions.Add(new DeleteAction(this));
         }
     }
 }

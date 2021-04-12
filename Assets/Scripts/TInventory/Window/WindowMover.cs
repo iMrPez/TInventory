@@ -35,6 +35,7 @@ namespace TInventory.Window
         {
             while (Input.GetMouseButton(0))
             {
+                window.transform.SetAsLastSibling();
                 window.position = Input.mousePosition + mouseOffset;
                 yield return null;
             }

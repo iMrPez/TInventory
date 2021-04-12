@@ -7,6 +7,7 @@ namespace TInventory.Container
     {
         public string containerName;
 
+        public Filter.Filter filter;
 
         private int[] flattenedContainer = new int[1];
 

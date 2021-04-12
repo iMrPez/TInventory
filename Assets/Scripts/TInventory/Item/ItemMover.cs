@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using Inventory.Item;
 using TInventory.Container;
 using TInventory.Item;
+using TInventory.Item.Action;
 using UnityEngine;
 
 namespace TInventory
@@ -12,6 +14,8 @@ namespace TInventory
     public class ItemMover : MonoBehaviour
     {
 
+        public static ItemMover instance;
+        
         /// <summary>
         /// Amount of time to hold down on an item before it is picked up.
         /// </summary>
@@ -70,15 +74,20 @@ namespace TInventory
         public static event ItemMovedDelegate ItemPlacedHandler;
 
         public static event ItemMovedDelegate ItemPickedUpHandler;
-        
-        
+
+
+        private void Awake()
+        {
+            instance = this;
+        }
+
         private void Update()
         {
 
             // TODO RETURN IF INVENTORY IS NOT OPEN
             
             // TODO REMOVE - for testings
-            if (InputHandler.RotateButtonDown())
+            if (InputHandler.GetRotateButtonDown())
             {
                 RotateHeldItem();
             }
@@ -89,7 +98,7 @@ namespace TInventory
                 HoldItemAtTouch();
             }
         }
-        
+
         /// <summary>
         /// Checks if the user is attempting to hold an item
         /// </summary>
@@ -97,7 +106,7 @@ namespace TInventory
         {
             if (InputHandler.GetPrimaryButtonDown())
             {
-                clickedItem = Inventory.GetItemAt(Input.mousePosition);
+                clickedItem = Inventory.GetItemAt(InputHandler.GetCursorPosition());
                 
                 if (clickedItem is null) return false;
                 
@@ -109,7 +118,7 @@ namespace TInventory
             if (InputHandler.GetPrimaryButton())
             {
                 return (Time.time - lastTouchTime > touchHoldTime || 
-                        Vector3.Distance(Input.mousePosition, clickedPosition) > Inventory.instance.slotSize / 2);
+                        Vector3.Distance(InputHandler.GetCursorPosition(), clickedPosition) > Inventory.instance.slotSize / 2);
             }
             
             return false;
@@ -144,7 +153,7 @@ namespace TInventory
         private IEnumerator HoldItem()
         {
             // Get currently open container
-            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
+            var containerAtTouch = Inventory.GetContainerAt(InputHandler.GetCursorPosition());
             
             AItem itemAtTouch = null;
             
@@ -152,13 +161,13 @@ namespace TInventory
             {
                 if (IsHoldingItem())
                 {
-                    containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
+                    containerAtTouch = Inventory.GetContainerAt(InputHandler.GetCursorPosition());
 
                     var window = Inventory.GetWindowAtMousePosition();
 
                     window?.UpdateViewport();
 
-                    itemAtTouch = Inventory.GetItemAt(Input.mousePosition, heldItem.gameObject);
+                    itemAtTouch = Inventory.GetItemAt(InputHandler.GetCursorPosition(), heldItem.gameObject);
 
                     UpdateHeldItem(containerAtTouch, itemAtTouch);
                 }
@@ -174,7 +183,7 @@ namespace TInventory
         /// <param name="openContainer">Currently Open Container</param>
         private void UpdateHeldItem(TInventory.Container.Container openContainer, AItem itemAtTouch)
         {
-            heldItem.transform.position = (Vector2) Input.mousePosition;
+            heldItem.transform.position = (Vector2) InputHandler.GetCursorPosition();
 
             heldItem.transform.SetParent(Inventory.instance.transform);
             heldItem.transform.SetAsLastSibling();
@@ -223,9 +232,6 @@ namespace TInventory
             {
                 ReturnHeldItem();
             }
-            
-            // Reset background color
-            //heldItem.SetBackgroundColor(defaultColor);
 
             ResetHold();
         }

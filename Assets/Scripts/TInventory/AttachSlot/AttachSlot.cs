@@ -8,11 +8,13 @@ namespace TInventory.AttachSlot
     public abstract class AttachSlot : MonoBehaviour
     {
         private AItem attachedItem = null;
+
+        public Filter.Filter filter;
         
         public event ItemMovedDelegate ItemAttachedHandler;
-
         public event ItemMovedDelegate ItemDetachHandler;
 
+        
         public Color equippedColor;
         
         private RectTransform rectTransform;
@@ -25,12 +27,19 @@ namespace TInventory.AttachSlot
             rectTransform = GetComponent<RectTransform>();
             ItemAttachedHandler += OnItemAttached;
             ItemDetachHandler += OnItemDetach;
-
         }
 
+        
         public virtual bool CanAttach(AItem item)
         {
-            return attachedItem is null;
+            if (attachedItem is null)
+            {
+                if (filter is null) return true;
+                
+                if (filter.IsMatching(item)) return true;
+            }
+
+            return false;
         }
         
         public virtual void Attach(AItem item)
@@ -45,6 +54,8 @@ namespace TInventory.AttachSlot
             
             item.containerGroup = null;
 
+            attachedItem = item;
+            
             oldSize = item.SetItemSize(new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y));
             oldColor = item.SetBackgroundColor(equippedColor);
 
@@ -66,6 +77,7 @@ namespace TInventory.AttachSlot
 
         public virtual void Detach(AItem item)
         {
+            attachedItem = null;
             item.SetItemSizeBySlots(oldSize);
             item.SetBackgroundColor(oldColor);
             

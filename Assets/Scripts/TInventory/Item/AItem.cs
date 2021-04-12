@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Inventory.Item;
 using TInventory.Container;
+using TInventory.ContextMenu.Action;
+using TInventory.Item.Action;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,6 +48,11 @@ namespace TInventory.Item
                 /// List of possible actions to be performed when item is released 
                 /// </summary>
                 public List<IItemAction> itemReleaseActions = new List<IItemAction>();
+
+                /// <summary>
+                /// List of actions that can be performed on item when the context menu is open
+                /// </summary>
+                public List<IAction> contextMenuActions = new List<IAction>();
                 
                 /// <summary>
                 /// UI - Icon to display the items sprite.

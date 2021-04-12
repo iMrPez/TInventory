@@ -5,6 +5,7 @@ namespace TInventory.Item.Action
 {
     public class PlaceAction : IItemAction
     {
+
         public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
@@ -13,7 +14,7 @@ namespace TInventory.Item.Action
             
             var slotGroup = containerAtTouch.GetSlotFromPosition(Input.mousePosition);
             
-            return !(heldItem is null) && containerAtTouch.CanItemFitAt(slotGroup.Slot, slotGroup.ContainerGroup,
+            return !(heldItem is null) && containerAtTouch.CanPlaceItemAt(slotGroup.Slot, slotGroup.ContainerGroup,
                 heldItem);
         }
 

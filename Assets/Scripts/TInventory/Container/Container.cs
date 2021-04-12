@@ -18,7 +18,7 @@ namespace TInventory.Container
         /// <summary>
         /// Container content, used as parent for slots and items.
         /// </summary>
-        private RectTransform rectTransform;
+        public RectTransform rectTransform;
 
         [SerializeField]
         private ContainerData containerData;
@@ -47,7 +47,7 @@ namespace TInventory.Container
         private void Update()
         {
             // TODO remove create item for testing.
-            if (InputHandler.GetSecondaryButtonDown())
+            if (Input.GetKeyDown(KeyCode.L))
             {
                 if (Inventory.GetContainerAt(Input.mousePosition) == this)
                 {
@@ -72,21 +72,8 @@ namespace TInventory.Container
         {
             ClearItems();
 
-            var slotSize = Inventory.instance.slotSize;
-
-            var padding = Inventory.instance.padding;
-
-            var margin = Inventory.instance.margin;
-
-            /*rectTransform.sizeDelta = new Vector2( (containerData.Width * (slotSize + padding + margin)) + margin,
-                (containerData.Height * (slotSize + padding + margin)) + margin);*/
-
-            
-            
             containerGroups = GetContainerGroups(data);
             
-            /*rectTransform.sizeDelta = new Vector2( (containerData.Width * (slotSize + padding)) + (containerGroups.Count * margin),
-            (containerData.Height * (slotSize + padding)) + (containerGroups.Count * margin));*/
             
             foreach (var containerGroup in containerGroups)
             {
@@ -244,6 +231,11 @@ namespace TInventory.Container
         /// TODO TEST
         public bool CanPlaceItemAt(Vector2 slot, ContainerGroup containerGroup, AItem item)
         {
+            if (containerData.filter != null)
+            {
+                if (!containerData.filter.IsMatching(item)) return false;
+            }
+
             return (IsSlotInsideContainer(slot, containerGroup) && CanItemFitAt(slot, containerGroup, item));
 
         }
