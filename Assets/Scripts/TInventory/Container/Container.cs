@@ -51,7 +51,7 @@ namespace TInventory.Container
             {
                 if (Inventory.GetContainerAt(Input.mousePosition) == this)
                 {
-                    var item = ItemFactory.instance.CreateBasicItem(5);
+                    var item = ItemFactory.instance.CreateItem(5);
                     if(!AddItem(item)) item.Destroy();
                 }
             }

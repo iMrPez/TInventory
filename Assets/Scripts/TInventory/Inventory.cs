@@ -65,6 +65,7 @@ namespace TInventory
         private static PointerEventData PointerEventData;
     
         
+        
         [Header("Misc")]
         [SerializeField]
         private EventSystem eventSystem;
@@ -79,6 +80,7 @@ namespace TInventory
             
             PointerEventData = new PointerEventData(eventSystem);
         }
+
 
         /// <summary>
         /// Gets the hit objects from raycast

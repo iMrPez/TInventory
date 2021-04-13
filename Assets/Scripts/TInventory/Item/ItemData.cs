@@ -12,6 +12,8 @@ namespace Inventory.Item
         /// Item id
         /// </summary>
         public int id;
+
+        public ItemPrefabType itemPrefabType;
         
         /// <summary>
         /// Item name

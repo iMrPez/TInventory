@@ -10,6 +10,11 @@ using Random = System.Random;
 
 namespace TInventory.Item
 {
+    public enum ItemPrefabType
+    {
+        Basic = 0
+    }
+    
     public class ItemFactory : MonoBehaviour
     {
         /// <summary>
@@ -23,6 +28,8 @@ namespace TInventory.Item
         /// </summary>
         [SerializeField]
         private GameObject basicItemPrefab;
+
+        public Dictionary<ItemPrefabType, GameObject> itemPrefabs = new Dictionary<ItemPrefabType, GameObject>();
         
         /// <summary>
         /// Basic item data.
@@ -34,6 +41,7 @@ namespace TInventory.Item
         private void Awake()
         {
             instance = this;
+            itemPrefabs.Add(ItemPrefabType.Basic, basicItemPrefab);
         }
         
         /// <summary>
@@ -54,31 +62,31 @@ namespace TInventory.Item
             }
         }
 
-
         /// <summary>
         /// Create basic items based on id.
         /// </summary>
+        /// <param name="prefabType">Type of prefab to create</param>
         /// <param name="id">Id of item to lookup</param>
         /// <param name="container">Container the item will be contained in</param>
         /// <returns>Returns initialized item</returns>
-        public BasicItem CreateBasicItem(int id)
+        public AItem CreateItem(int id)
         {
             var itemData = GetItemById(id);
 
-            return CreateBasicItem(itemData);
+            return CreateItem(itemData);
         }
         
-        public BasicItem CreateBasicItem(ItemData itemData)
+        public AItem CreateItem(ItemData itemData)
         {
             if (itemData != null)
             {
                 Debug.Log($"Item({itemData.id}) Created - {itemData}", itemData);
                 
-                var item = Instantiate(basicItemPrefab).GetComponent<BasicItem>();
+                var item = Instantiate(itemPrefabs[itemData.itemPrefabType]).GetComponent<BasicItem>();
             
                 item.Initialize(itemData, null);
 
-                item.SetCount(3);
+                item.SetCount(1);
                 
                 return item;
             }

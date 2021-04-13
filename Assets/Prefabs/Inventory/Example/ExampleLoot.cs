@@ -47,7 +47,7 @@ namespace Prefabs.Inventory.Example
                     return;
                 }
                 
-                var itemToAdd = ItemFactory.instance.CreateBasicItem(itemData);
+                var itemToAdd = ItemFactory.instance.CreateItem(itemData);
 
                 container.AddItem(itemToAdd);
             }
