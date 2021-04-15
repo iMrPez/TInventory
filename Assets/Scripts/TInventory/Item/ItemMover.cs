@@ -1,12 +1,9 @@
-using System;
 using System.Collections;
-using Inventory.Item;
 using TInventory.Container;
-using TInventory.Item;
 using TInventory.Item.Action;
 using UnityEngine;
 
-namespace TInventory
+namespace TInventory.Item
 {
     /// <summary>
     /// Class handles pick up, holding, and placing Items in Containers. 
@@ -129,22 +126,21 @@ namespace TInventory
         /// </summary>
         private void HoldItemAtTouch()
         {
-            if (!(clickedItem is null))
-            {
-                heldItem = clickedItem;
-                // Trigger events
-                ItemPickedUpHandler?.Invoke(heldItem);
+            
+            heldItem = clickedItem;
+            // Trigger events
+            ItemPickedUpHandler?.Invoke(heldItem);
 
-                startPos = clickedItem.slotPosition;
-                startContainerGroup = clickedItem.containerGroup;
-                startRotation = clickedItem.IsRotated();
+            startPos = heldItem.slotPosition;
+            startContainerGroup = heldItem.containerGroup;
+            startRotation = heldItem.IsRotated();
 
-                clickedItem.containerGroup?.parentContainer.RemoveItem(clickedItem);
+            heldItem.containerGroup?.parentContainer.RemoveItem(heldItem);
 
-                clickedItem.attachedSlot?.Detach(clickedItem);
+            heldItem.attachedSlot?.Detach(heldItem);
 
-                StartCoroutine(HoldItem());
-            }
+            StartCoroutine(HoldItem());
+            
         }
         
         /// <summary>

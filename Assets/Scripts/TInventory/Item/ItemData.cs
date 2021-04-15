@@ -13,7 +13,7 @@ namespace Inventory.Item
         /// </summary>
         public int id;
 
-        public ItemPrefabType itemPrefabType;
+        public ItemPrefab.ItemPrefabType itemPrefabType;
         
         /// <summary>
         /// Item name

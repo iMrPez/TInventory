@@ -123,6 +123,8 @@ namespace TInventory.Item
                         iconImage.sprite = itemData.image;
 
                         this.containerGroup = containerGroup;
+                        
+                        UpdateImageSize(rectTransform.sizeDelta);
                 }
 
                 /// <summary>
@@ -134,6 +136,24 @@ namespace TInventory.Item
                 {
                         SetItemInfo(itemData, containerGroup);
                 }
+                
+                
+                public void UpdateImageSize(Vector2 sizeDelta)
+                {
+                        Debug.Log($"SizeDelta: {sizeDelta}");
+                        
+                        if (!(iconRect is null) && data.maxImageSize != Vector2.zero)
+                        {
+                                iconRect.sizeDelta = new Vector2(
+                                        sizeDelta.x > data.maxImageSize.x
+                                                ? data.maxImageSize.x
+                                                : sizeDelta.x,
+                                        sizeDelta.y > data.maxImageSize.y
+                                                ? data.maxImageSize.y
+                                                : sizeDelta.y);
+                        }
+                }
+                
                 
                 /// <summary>
                 /// Sets the items text field.
@@ -231,22 +251,6 @@ namespace TInventory.Item
                 /// <returns>Item's count</returns>
                 public virtual int GetCount() => count;
 
-
-                public void SetImageModeToCenter()
-                {
-                        var centerPoint = new Vector2(0.5f, 0.5f);
-                        iconRect.anchoredPosition = centerPoint;
-                        iconRect.anchorMin = centerPoint;
-                        iconRect.anchorMax = centerPoint;
-                }
-                
-                public void SetImageModeToFit()
-                {
-                        iconRect.anchoredPosition = new Vector2(0.5f, 0.5f);
-                        iconRect.anchorMin = Vector2.zero;
-                        iconRect.anchorMax = Vector2.one;
-                }
-                
                 
                 /// <summary>
                 /// Destroy the item.

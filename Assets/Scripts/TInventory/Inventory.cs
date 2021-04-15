@@ -55,11 +55,6 @@ namespace TInventory
         public float padding;
         public float margin;
         public float slotSize;
-
-        [Header("Context Menu")] 
-        public ContextMenu.ContextMenu contextMenu;
-        
-        public ContainerData testContainerData; // TODO REMOVE! ONLY FOR TESTING
         
         private static GraphicRaycaster Raycaster;
         private static PointerEventData PointerEventData;

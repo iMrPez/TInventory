@@ -10,29 +10,23 @@ using Random = System.Random;
 
 namespace TInventory.Item
 {
-    public enum ItemPrefabType
-    {
-        Basic = 0
-    }
+    
     
     public class ItemFactory : MonoBehaviour
     {
+        
+        
+        
         /// <summary>
         /// Item factory singleton instance.
         /// </summary>
         public static ItemFactory instance;
-
-        // TODO REDO prefab holding and instantiation.
-        /// <summary>
-        /// Basic item prefab.
-        /// </summary>
-        [SerializeField]
-        private GameObject basicItemPrefab;
-
-        public Dictionary<ItemPrefabType, GameObject> itemPrefabs = new Dictionary<ItemPrefabType, GameObject>();
+        
+        
+        public List<ItemPrefab> itemPrefabs;
         
         /// <summary>
-        /// Basic item data.
+        /// Item Data
         /// </summary>
         [SerializeField]
         private List<ItemData> items;
@@ -41,7 +35,6 @@ namespace TInventory.Item
         private void Awake()
         {
             instance = this;
-            itemPrefabs.Add(ItemPrefabType.Basic, basicItemPrefab);
         }
         
         /// <summary>
@@ -75,6 +68,9 @@ namespace TInventory.Item
 
             return CreateItem(itemData);
         }
+
+        public GameObject GetItemPrefab(ItemPrefab.ItemPrefabType prefabType) =>
+            itemPrefabs.First(i => i.type == prefabType).prefab;
         
         public AItem CreateItem(ItemData itemData)
         {
@@ -82,7 +78,7 @@ namespace TInventory.Item
             {
                 Debug.Log($"Item({itemData.id}) Created - {itemData}", itemData);
                 
-                var item = Instantiate(itemPrefabs[itemData.itemPrefabType]).GetComponent<BasicItem>();
+                var item = Instantiate(GetItemPrefab(itemData.itemPrefabType)).GetComponent<BasicItem>();
             
                 item.Initialize(itemData, null);
 
@@ -124,6 +120,25 @@ namespace TInventory.Item
             }).Single(x => x.MinRarity <= randomNumber && x.MaxRarity >= randomNumber);
 
             return item.item;
+        }
+    }
+
+    [Serializable]
+    public struct ItemPrefab
+    {
+        public enum ItemPrefabType
+        {
+            Basic = 0,
+            Weapon = 1
+        }
+        
+        public ItemPrefabType type;
+        public GameObject prefab;
+
+        public ItemPrefab(ItemPrefabType type, GameObject prefab)
+        {
+            this.type = type;
+            this.prefab = prefab;
         }
     }
 }

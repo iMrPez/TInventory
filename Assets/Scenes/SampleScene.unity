@@ -680,8 +680,6 @@ MonoBehaviour:
   padding: 4
   margin: 10
   slotSize: 64
-  contextMenu: {fileID: 0}
-  testContainerData: {fileID: 0}
   eventSystem: {fileID: 2018939558}
   inventoryContainer: {fileID: 0}
 --- !u!114 &1856951761
@@ -886,7 +884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3118931879701820056, guid: 35032b23d12b4a34ba44b528328bebe7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 243.71997
       objectReference: {fileID: 0}
     - target: {fileID: 3118931879701820056, guid: 35032b23d12b4a34ba44b528328bebe7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

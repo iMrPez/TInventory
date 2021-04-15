@@ -48,8 +48,6 @@ namespace TInventory.AttachSlot
 
             item.transform.position = transform.position;
             
-            item.SetImageModeToCenter();
-
             item.attachedSlot = this;
             
             item.containerGroup = null;
@@ -59,30 +57,20 @@ namespace TInventory.AttachSlot
             oldSize = item.SetItemSize(new Vector2(rectTransform.sizeDelta.x, rectTransform.sizeDelta.y));
             oldColor = item.SetBackgroundColor(equippedColor);
 
-            if (!(item.iconRect is null) && item.data.maxImageSize != Vector2.zero)
-            {
-                item.iconRect.sizeDelta = new Vector2(
-                    rectTransform.sizeDelta.x > item.data.maxImageSize.x
-                        ? item.data.maxImageSize.x
-                        : rectTransform.sizeDelta.x,
-                    
-                    rectTransform.sizeDelta.y > item.data.maxImageSize.y
-                        ? item.data.maxImageSize.y
-                        : rectTransform.sizeDelta.y);
-
-            }
+            item.UpdateImageSize(rectTransform.sizeDelta);
             
             ItemAttachedHandler?.Invoke(item);
         }
+
+        
 
         public virtual void Detach(AItem item)
         {
             attachedItem = null;
             item.SetItemSizeBySlots(oldSize);
             item.SetBackgroundColor(oldColor);
-            
-            item.iconRect.sizeDelta = oldSize;
-            item.SetImageModeToFit();
+
+            item.UpdateImageSize(item.rectTransform.sizeDelta);
             
             ItemDetachHandler?.Invoke(item);
         }

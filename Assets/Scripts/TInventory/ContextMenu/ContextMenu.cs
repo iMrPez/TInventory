@@ -48,6 +48,7 @@ namespace TInventory.ContextMenu
 
             if (!(clickedItem is null))
             {
+                ClearOptions();
                 Show();
                 ShowMenu(clickedItem);
             }
@@ -56,7 +57,7 @@ namespace TInventory.ContextMenu
         
         private void ShowMenu(AItem item)
         {
-
+            
             PopulateMenu(item.contextMenuActions);
 
             transform.position = InputHandler.GetCursorPosition();
@@ -99,6 +100,7 @@ namespace TInventory.ContextMenu
         
         public void Show()
         {
+            transform.SetAsLastSibling();
             gameObject.SetActive(true);
         }
 
