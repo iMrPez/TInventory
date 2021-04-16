@@ -1,16 +1,14 @@
-using TInventory.Item;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace TInventory.ContextMenu.Action
 {
-    public class DeleteAction : IAction
+    public class DeleteOption : IOption
     {
-        private AItem target;
+        private readonly Item.Item _target;
 
-        public DeleteAction(AItem target)
+        public DeleteOption(Item.Item target)
         {
-            this.target = target;
+            _target = target;
         }
 
         public string GetName()
@@ -20,7 +18,7 @@ namespace TInventory.ContextMenu.Action
 
         public bool CanAct()
         {
-            if (target is null)
+            if (_target is null)
             {
                 Debug.LogError("No target set!");
                 return false;
@@ -31,12 +29,8 @@ namespace TInventory.ContextMenu.Action
 
         public void Act()
         {
-            target.Destroy();
+            _target.Destroy();
         }
-
-        public void SetTarget(AItem item)
-        {
-            this.target = item;
-        }
+        
     }
 }

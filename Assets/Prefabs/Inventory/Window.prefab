@@ -448,12 +448,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c668b4828c95c0c4b9092e7042e0593d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startWithContainers: 0
-  startContainers: []
-  scrollView: {fileID: 8308518148662514479}
-  windowContent: {fileID: 8308518148500469816}
-  layoutGroup: {fileID: 8308518148500469819}
-  titleText: {fileID: 8308518147408718493}
+  hideWindowOnClose: 0
+  _startWithContainers: 0
+  _startContainers: []
+  _scrollView: {fileID: 8308518148662514479}
+  _windowContent: {fileID: 8308518148500469816}
+  _titleText: {fileID: 8308518147408718493}
 --- !u!1 &8308518147623729106
 GameObject:
   m_ObjectHideFlags: 0

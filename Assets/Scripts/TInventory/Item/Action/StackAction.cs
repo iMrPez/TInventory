@@ -1,28 +1,27 @@
-﻿using Inventory.Item;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TInventory.Item.Action
 {
     public class StackAction : IItemAction
     {
         
-        public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
+        public bool CanAct(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             if (heldItem is null || itemAtTouch is null) return false;
             
             // Check if item is not already at max count.
-            if (itemAtTouch.GetCount() >= itemAtTouch.data.maxCount)
+            if (itemAtTouch.GetCount() >= itemAtTouch.Data.maxCount)
                 return false;
-                
+
             // Check if the two items are of the same type
-            return itemAtTouch.data.id == heldItem.data.id;
+            return itemAtTouch.Data.id == heldItem.Data.id;
         }
 
-        public bool Act(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
+        public bool Act(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             if ((itemAtTouch is null) || (heldItem is null)) return false;
             
-            var remainder = GetRemainder(itemAtTouch.GetCount(), heldItem.GetCount(), itemAtTouch.data.maxCount);
+            var remainder = GetRemainder(itemAtTouch.GetCount(), heldItem.GetCount(), itemAtTouch.Data.maxCount);
 
             if (remainder > 0)
             {

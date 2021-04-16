@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using TInventory.ContextMenu.Action;
-using TInventory.Item;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Inventory.Item
+namespace TInventory.Item
 {
     [CreateAssetMenu(fileName = "BasicItemData", menuName = "Inventory/Item/Basic Item Data")]
     public class ItemData : ScriptableObject
@@ -13,6 +10,9 @@ namespace Inventory.Item
         /// </summary>
         public int id;
 
+        /// <summary>
+        /// Items prefab type
+        /// </summary>
         public ItemPrefab.ItemPrefabType itemPrefabType;
         
         /// <summary>
@@ -20,6 +20,9 @@ namespace Inventory.Item
         /// </summary>
         public string itemName;
 
+        /// <summary>
+        /// Items type
+        /// </summary>
         public ItemType itemType;
         
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Inventory.Item;
 using TInventory.Item;
 using TMPro;
 using UnityEngine;
@@ -9,87 +8,61 @@ namespace TInventory.Container
 {
     public class Container : MonoBehaviour
     {
-        /// <summary>
-        /// Container window title text field.
-        /// </summary>
-        [SerializeField] 
-        private TextMeshProUGUI titleText;
+
+        public TextMeshProUGUI TitleText;
         
-        /// <summary>
-        /// Container content, used as parent for slots and items.
-        /// </summary>
-        public RectTransform rectTransform;
-
-        [SerializeField]
-        private ContainerData containerData;
+        [SerializeField] private ContainerData _containerData;
         
-        /// <summary>
-        /// List of items in container.
-        /// </summary>
-        public List<AItem> items = new List<AItem>();
+        private List<Item.Item> _items = new List<Item.Item>();
+        
+        private List<ContainerGroup> _containerGroups;
 
-        /// <summary>
-        /// List of Container groups
-        /// </summary>
-        private List<ContainerGroup> containerGroups;
-
+        public RectTransform RectTransform { get; private set; }
+        
+        // Events
         public event ItemMovedDelegate ItemAddedHandler;
-
         public event ItemMovedDelegate ItemRemovedHandler;
+        
         
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
-            ItemAddedHandler += OnItemAdded;
-            ItemRemovedHandler += OnItemRemoved;
+            RectTransform = GetComponent<RectTransform>();
         }
         
-        private void Update()
-        {
-            // TODO remove create item for testing.
-            if (Input.GetKeyDown(KeyCode.L))
-            {
-                if (Inventory.GetContainerAt(Input.mousePosition) == this)
-                {
-                    var item = ItemFactory.instance.CreateItem(5);
-                    if(!AddItem(item)) item.Destroy();
-                }
-            }
-        }
-
-        // TODO ADD SUMMARY
-        public void Initialize(ContainerData containerData)
-        {
-            this.containerData = containerData;
-            CreateContainer(containerData);
-        }
         
         /// <summary>
-        /// Initializes the Container with a determined by the x|y * slot size. 
+        /// Creates container based on the containerData
         /// </summary>
-        /// <param name="data"></param>
-        public void CreateContainer(ContainerData data)
+        /// <param name="containerData"></param>
+        public void InitializeContainer(ContainerData containerData)
         {
+            _containerData = containerData;
+            
             ClearItems();
 
-            containerGroups = GetContainerGroups(data);
+            _containerGroups = GetContainerGroups(containerData);
             
             
-            foreach (var containerGroup in containerGroups)
+            foreach (var containerGroup in _containerGroups)
             {
                 CreateContainerGroup(containerGroup);
             }
             
-            rectTransform.sizeDelta = GetContainerSize(containerGroups, data);
+            RectTransform.sizeDelta = GetContainerSize(_containerGroups);
 
         }
 
-        private Vector2 GetContainerSize(List<ContainerGroup> groups, ContainerData data)
+        /// <summary>
+        /// Gets total size of container
+        /// </summary>
+        /// <param name="groups">Container Groups</param>
+        /// <returns>Size of container</returns>
+        private Vector2 GetContainerSize(List<ContainerGroup> groups)
         {
             
-            var groupSize = Inventory.instance.slotSize + Inventory.instance.padding;
+            var groupSize = Inventory.Instance.slotSize + Inventory.Instance.padding;
 
-            var margin = Inventory.instance.margin;
+            var margin = Inventory.Instance.margin;
             
             Vector2 finalSize = Vector2.zero;
             
@@ -110,17 +83,19 @@ namespace TInventory.Container
             return new Vector2(finalSize.x + margin, Mathf.Abs(finalSize.y) + margin);
         }
 
-        // TODO ADD SUMMARY
+        /// <summary>
+        /// Creates Container Group
+        /// </summary>
+        /// <param name="containerGroup"></param>
         private void CreateContainerGroup(ContainerGroup containerGroup)
         {
-            
-            var slotSize = Inventory.instance.slotSize;
-            var padding = Inventory.instance.padding;
-            var margin = Inventory.instance.margin;
+            var slotSize = Inventory.Instance.slotSize;
+            var padding = Inventory.Instance.padding;
+            var margin = Inventory.Instance.margin;
             
             var groupSize = slotSize + padding;
 
-            var slot = Instantiate(Inventory.instance.slotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
+            var slot = Instantiate(Inventory.Instance.SlotPrefab, containerGroup.rectTransform).GetComponent<RectTransform>();
             
             // Move group to correct slot position
             containerGroup.rectTransform.position += new Vector3(
@@ -138,15 +113,19 @@ namespace TInventory.Container
         }
 
 
-        // TODO ADD SUMMARY AND NEEDS TESTING
-        private List<ContainerGroup> GetContainerGroups(ContainerData data)
+        /// <summary>
+        /// Gets container groups from containerData
+        /// </summary>
+        /// <param name="containerData">Container Data</param>
+        /// <returns>List of container groups</returns>
+        private List<ContainerGroup> GetContainerGroups(ContainerData containerData)
         {
             var groups = new List<ContainerGroup>();
             
-            for (int x = 0; x < data.Width; x++)
-            for (int y = 0; y < data.Height; y++)
+            for (int x = 0; x < containerData.Width; x++)
+            for (int y = 0; y < containerData.Height; y++)
             {
-                var slot = data.Container[x, y];
+                var slot = containerData.Container[x, y];
 
                 // Check if slot is a single slot or the slot is empty
                 switch (slot)
@@ -159,12 +138,10 @@ namespace TInventory.Container
                         groups.Add(group);
                         continue;
                 }
-
                 
                 // Check for matching group of slots
                 ContainerGroup match = groups.FirstOrDefault(g => g.id == slot);
 
-                
                 if (match != null)
                 {
                     // Add slot if their is a matching group of slots
@@ -177,18 +154,23 @@ namespace TInventory.Container
                     groups.Add(group);
                 }
             }
-
             
             return groups;
         }
 
-        // TODO ADD SUMMARY
-        private ContainerGroup CreateNewGroup(int slot, int x, int y)
+        /// <summary>
+        /// Creates new container group
+        /// </summary>
+        /// <param name="groupId">Group Id</param>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y position</param>
+        /// <returns>Container Group</returns>
+        private ContainerGroup CreateNewGroup(int groupId, int x, int y)
         {
-            var group = Instantiate(Inventory.instance.containerGroupPrefab, rectTransform)
+            var group = Instantiate(Inventory.Instance.ContainerGroupPrefab, RectTransform)
                 .GetComponent<ContainerGroup>();
 
-            group.Init(slot, new Vector2(x, y), new Vector2(1, 1), this);
+            group.Initialize(groupId, new Vector2(x, y), new Vector2(1, 1), this);
             return group;
         }
 
@@ -200,13 +182,13 @@ namespace TInventory.Container
         /// <returns>Returns slot x and y from Container where supplied position lies.</returns>
         public (Vector2 Slot, ContainerGroup ContainerGroup) GetSlotFromPosition(Vector3 position)
         {
-            var containerGroup = Inventory.GetContainerGroupAt(position);
+            var containerGroup = InventoryUtility.GetContainerGroupAt(position);
 
             if (containerGroup == null) return (new Vector2(-1, -1), null);
             
             position = containerGroup.rectTransform.position - position;
         
-            var size = Inventory.instance.slotSize;
+            var size = Inventory.Instance.slotSize;
 
             var slot = new Vector2(
                 -Mathf.Ceil(position.x / size),
@@ -223,21 +205,18 @@ namespace TInventory.Container
         /// <summary>
         /// Checks if an Item can be placed at a given Container Slot.
         /// </summary>
-        /// <param name="slot">Slot to check at</param>
-        /// <param name="slotGroup">TODO ADD</param>
-        /// <param name="containerGroup">TODO ADD</param>
-        /// <param name="item">Item to try to place</param>
-        /// <returns>Returns true if Item can fit at Slot.</returns>
-        /// TODO TEST
-        public bool CanPlaceItemAt(Vector2 slot, ContainerGroup containerGroup, AItem item)
+        /// <param name="slot">Slot position</param>
+        /// <param name="containerGroup">Container Group</param>
+        /// <param name="item">Item to place</param>
+        /// <returns>If item can be placed at given position</returns>
+        public bool CanPlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
-            if (containerData.filter != null)
+            if (_containerData.filter != null)
             {
-                if (!containerData.filter.IsMatching(item)) return false;
+                if (!_containerData.filter.IsMatching(item)) return false;
             }
 
             return (IsSlotInsideContainer(slot, containerGroup) && CanItemFitAt(slot, containerGroup, item));
-
         }
 
 
@@ -247,37 +226,36 @@ namespace TInventory.Container
         /// <param name="slot">Slot to place item at</param>
         /// <param name="containerGroup"></param>
         /// <param name="item">Item to be placed</param>
-        /// TODO TEST
-        public void PlaceItemAt(Vector2 slot, ContainerGroup containerGroup, AItem item)
+        public void PlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
-            if (!items.Contains(item))
+            if (!_items.Contains(item))
             {
-                items.Add(item);
+                _items.Add(item);
             }
 
             item.transform.SetParent(containerGroup.rectTransform);
 
-            item.containerGroup = containerGroup;
+            item.UpdatePlacementInfo(slot, containerGroup, null);
 
-            item.attachedSlot = null;
-            
-            item.slotPosition = slot;
-            
             item.ResetColor();
 
-            var padding = Inventory.instance.padding / 2;
+            var padding = Inventory.Instance.padding / 2;
 
-            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.instance.slotSize) + new Vector2(padding, -padding);
+            item.transform.localPosition = (new Vector2(slot.x, -slot.y) * Inventory.Instance.slotSize) + new Vector2(padding, -padding);
 
             item.transform.SetAsLastSibling();
 
             ItemAddedHandler?.Invoke(item);
         }
 
-        // TODO ADD SUMMARY
-        public void RemoveItem(AItem item)
+        
+        /// <summary>
+        /// Removes item from list
+        /// </summary>
+        /// <param name="item"></param>
+        public void RemoveItem(Item.Item item)
         {
-            items.Remove(item);
+            _items.Remove(item);
             ItemRemovedHandler?.Invoke(item);
         }
         
@@ -288,7 +266,6 @@ namespace TInventory.Container
         /// <param name="slot">Slot to check</param>
         /// <param name="containerGroup"></param>
         /// <returns>Returns true if Slot exists in Container</returns>
-        /// TODO TEST
         public bool IsSlotInsideContainer(Vector2 slot, ContainerGroup containerGroup)
         {
             if ((slot.x < 0) || (slot.y < 0)) return false;
@@ -309,16 +286,15 @@ namespace TInventory.Container
         /// <param name="containerGroup"></param>
         /// <param name="item">Item to check with</param>
         /// <returns>Returns true if Item fits at Slot</returns>
-        /// TODO TEST
-        public bool CanItemFitAt(Vector2 slot, ContainerGroup containerGroup, AItem item)
+        public bool CanItemFitAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
             if (containerGroup is null || item is null) return false;
 
-            if (slot.x + item.size.x <= containerGroup.size.x && slot.y + item.size.y <= containerGroup.size.y)
+            if (slot.x + item.Size.x <= containerGroup.size.x && slot.y + item.Size.y <= containerGroup.size.y)
             {
-                for (float x = slot.x; x < slot.x + item.size.x; x++)
+                for (float x = slot.x; x < slot.x + item.Size.x; x++)
                 {
-                    for (float y = slot.y; y < slot.y + item.size.y; y++)
+                    for (float y = slot.y; y < slot.y + item.Size.y; y++)
                     {
                         if (IsSlotInUse(x, y, containerGroup, item.gameObject))
                         {
@@ -336,7 +312,7 @@ namespace TInventory.Container
         /// Check if Slot already has an Item at it.
         /// </summary>
         /// <param name="slot">Slot to check</param>
-        /// <param name="containerGroup">TODO ADD</param>
+        /// <param name="containerGroup">Container Group</param>
         /// <returns>Returns true if an Item exists at Slot</returns>
         public bool IsSlotInUse(Vector2 slot, ContainerGroup containerGroup)
         {
@@ -349,7 +325,7 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="x">Slot x location</param>
         /// <param name="y">Slot y location</param>
-        /// <param name="containerGroup">TODO ADD</param>
+        /// <param name="containerGroup">Container Group</param>
         /// <param name="itemToIgnore">Item to ignore</param>
         /// <returns>Returns true if an Item exists at Slot</returns>
         public bool IsSlotInUse(float x, float y, ContainerGroup containerGroup, GameObject itemToIgnore = null)
@@ -357,11 +333,11 @@ namespace TInventory.Container
 
             if (containerGroup is null) return true;
 
-            foreach (var item in items)
+            foreach (var item in _items)
             {
-                if (item.gameObject == itemToIgnore || item.containerGroup != containerGroup) continue;
+                if (item.gameObject == itemToIgnore || item.ContainerGroup != containerGroup) continue;
                 
-                if ((x >= item.slotPosition.x && y >= item.slotPosition.y) && (x <= item.slotPosition.x + item.size.x -1) && (y <= item.slotPosition.y + item.size.y -1))
+                if ((x >= item.SlotPosition.x && y >= item.SlotPosition.y) && (x <= item.SlotPosition.x + item.Size.x -1) && (y <= item.SlotPosition.y + item.Size.y -1))
                 {
                     return true;
                 }
@@ -375,12 +351,12 @@ namespace TInventory.Container
         /// </summary>
         private void ClearItems()
         {
-            foreach (var item in items)
+            foreach (var item in _items)
             {
                 item.Destroy();
             }
             
-            items.Clear();
+            _items.Clear();
         }
 
     
@@ -389,9 +365,9 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="item">Item to add</param>
         /// <returns>Returns true if Item fits and is successfully added to Container</returns>
-        public bool AddItem(AItem item)
+        public bool AddItem(Item.Item item)
         {
-            foreach (var containerGroup in containerGroups)
+            foreach (var containerGroup in _containerGroups)
             {
                 for (int y = 0; y < containerGroup.size.y; y++)
                 {
@@ -409,18 +385,6 @@ namespace TInventory.Container
             }
 
             return false;
-        }
-
-        // TODO ADD SUMMARY
-        protected virtual void OnItemAdded(AItem item)
-        {
-            
-        }
-
-        // TODO ADD SUMMARY
-        protected virtual void OnItemRemoved(AItem item)
-        {
-            
         }
     }
 }

@@ -5,7 +5,6 @@ namespace TInventory.Window
 {
     public class WindowMover : MonoBehaviour
     {
-        
         void Update()
         {
             TryMoveWindow();
@@ -13,9 +12,9 @@ namespace TInventory.Window
 
         private void TryMoveWindow()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (InputHandler.GetPrimaryButtonDown())
             {
-                var windowHeaderObject = Inventory.GetWindowHeaderAtMousePosition();
+                var windowHeaderObject = InventoryUtility.GetWindowHeaderAtMousePosition();
 
                 var window = windowHeaderObject?.transform.parent.GetComponent<Window>();
 
@@ -33,7 +32,7 @@ namespace TInventory.Window
         /// <param name="mouseOffset">Mouse's offset from the window's</param>
         private IEnumerator MoveWindowToMouse(Transform window, Vector3 mouseOffset)
         {
-            while (Input.GetMouseButton(0))
+            while (InputHandler.GetPrimaryButton())
             {
                 window.transform.SetAsLastSibling();
                 window.position = Input.mousePosition + mouseOffset;

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Inventory.Item;
 using TInventory.Item;
 using UnityEngine;
 
@@ -10,9 +8,9 @@ namespace TInventory.Filter
     {
         public ItemCategory allowedCategory;
 
-        public bool IsMatching(AItem item)
+        public bool IsMatching(Item.Item item)
         {
-            return IsMatching(item.data);
+            return IsMatching(item.Data);
         }
         
         public bool IsMatching(ItemData itemData)

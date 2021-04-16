@@ -9,26 +9,25 @@ namespace TInventory.Editor
     [CustomEditor(typeof(ContainerData))]
     public class ContainerDataEditor : UnityEditor.Editor
     {
-
-        public int[,] container;
+        private int[,] _container;
         
-        Vector2Int newContainerSize = Vector2Int.zero;
+        Vector2Int _newContainerSize = Vector2Int.zero;
 
-        bool show;
+        bool _show;
         
-        int groupNumber;
+        int _groupNumber;
 
-        private SerializedProperty filterProperty;
+        private SerializedProperty _filterProperty;
         
         public void OnEnable()
         {
             ContainerData containerData = (ContainerData)target;
             
-            container = containerData.Container;
+            _container = containerData.Container;
             
-            newContainerSize = new Vector2Int((int) containerData.Width, (int) containerData.Height);
+            _newContainerSize = new Vector2Int((int) containerData.Width, (int) containerData.Height);
 
-            filterProperty = serializedObject.FindProperty("filter");
+            _filterProperty = serializedObject.FindProperty("filter");
         }
 
         public override void OnInspectorGUI()
@@ -38,7 +37,7 @@ namespace TInventory.Editor
 
             containerData.containerName = EditorGUILayout.TextField("Container Name", containerData.containerName);
 
-            EditorGUILayout.PropertyField(filterProperty, new GUIContent("Filter"));
+            EditorGUILayout.PropertyField(_filterProperty, new GUIContent("Filter"));
             
             EditorGUILayout.Separator();
             
@@ -57,11 +56,11 @@ namespace TInventory.Editor
             
             EditorGUILayout.BeginHorizontal();
             
-            groupNumber = EditorGUILayout.IntField("Group", math.clamp(groupNumber, 0, 99));
+            _groupNumber = EditorGUILayout.IntField("Group", math.clamp(_groupNumber, 0, 99));
             
             if (GUILayout.Button("Set To Group"))
             {
-                SetToGroup(container, groupNumber);
+                SetToGroup(_container, _groupNumber);
             }
             
             EditorGUILayout.EndHorizontal();
@@ -70,27 +69,37 @@ namespace TInventory.Editor
             
             EditorGUILayout.HelpBox("Slot customization guide. \n0 Is an empty slot location. \n1 Is a single slot and will be spaced out from the other solo slots. \nAnything greater than 1 is a group. All groups must be in a square and will display an incorrect layout if groups are not properly set. A new number needs to be used for each group.", MessageType.Info);
             
-            DisplayContainer(container);
+            DisplayContainer(_container);
 
             EditorGUILayout.Separator();
             
             if (GUILayout.Button("Save Container"))
             {
-                containerData.SetContainer(container);
+                containerData.SetContainer(_container);
                 Debug.Log("Container data saved!");
             }
 
             serializedObject.ApplyModifiedProperties();
         }
 
+        
+        /// <summary>
+        /// Display container Size
+        /// </summary>
         private void DisplayContainerSize()
         {
-            newContainerSize = EditorGUILayout.Vector2IntField("Container Size", newContainerSize);
+            _newContainerSize = EditorGUILayout.Vector2IntField("Container Size", _newContainerSize);
 
-            newContainerSize.x = newContainerSize.x < 1 ? 1 : newContainerSize.x;
-            newContainerSize.y = newContainerSize.y < 1 ? 1 : newContainerSize.y;
+            _newContainerSize.x = _newContainerSize.x < 1 ? 1 : _newContainerSize.x;
+            _newContainerSize.y = _newContainerSize.y < 1 ? 1 : _newContainerSize.y;
         }
 
+        
+        /// <summary>
+        /// Sets the container to specific group
+        /// </summary>
+        /// <param name="containerToModify">Container to be modified</param>
+        /// <param name="group">Group to set container to</param>
         private static void SetToGroup(int[,] containerToModify, int group)
         {
             for (int x = 0; x < containerToModify.GetLength(0); x++)
@@ -100,15 +109,25 @@ namespace TInventory.Editor
             }
         }
 
+        
+        /// <summary>
+        /// Update container size
+        /// </summary>
         private void UpdateContainerSize()
         {
-            var oldContainer = container;
+            var oldContainer = _container;
             
-            container = new int[newContainerSize.x, newContainerSize.y];
+            _container = new int[_newContainerSize.x, _newContainerSize.y];
 
-            container = CopyToContainer(container, oldContainer);
+            _container = CopyToContainer(_container, oldContainer);
         }
 
+        /// <summary>
+        /// Copy container data
+        /// </summary>
+        /// <param name="containerToModify">Container to be modified</param>
+        /// <param name="dataToCopy">Container to copy</param>
+        /// <returns>Container Matrix</returns>
         private int[,] CopyToContainer(int[,] containerToModify, int[,] dataToCopy)
         {
             for (int x = 0; x < containerToModify.GetLength(0); x++)
@@ -124,11 +143,15 @@ namespace TInventory.Editor
             return containerToModify;
         }
 
+        /// <summary>
+        /// Show Container
+        /// </summary>
+        /// <param name="container">Container Matrix</param>
         private void DisplayContainer(int[,] container)
         {
-            show = EditorGUILayout.BeginFoldoutHeaderGroup(show, "Show Container Data");
+            _show = EditorGUILayout.BeginFoldoutHeaderGroup(_show, "Show Container Data");
             
-            if (show)
+            if (_show)
             {
                 for (int y = 0; y < container.GetLength(1); y++)
                 {

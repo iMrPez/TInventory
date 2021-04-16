@@ -1,14 +1,13 @@
-﻿using Inventory.Item;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TInventory.Item.Action
 {
     public class PlaceAction : IItemAction
     {
 
-        public bool CanAct(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
+        public bool CanAct(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
-            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
+            var containerAtTouch = InventoryUtility.GetContainerAt(Input.mousePosition);
 
             if (containerAtTouch is null) return false;
             
@@ -18,9 +17,9 @@ namespace TInventory.Item.Action
                 heldItem);
         }
 
-        public bool Act(AItem heldItem = null, AItem itemAtTouch = null, TInventory.Container.Container openContainer = null)
+        public bool Act(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
-            var containerAtTouch = Inventory.GetContainerAt(Input.mousePosition);
+            var containerAtTouch = InventoryUtility.GetContainerAt(Input.mousePosition);
             
             if (containerAtTouch is null || heldItem is null) return false;
             

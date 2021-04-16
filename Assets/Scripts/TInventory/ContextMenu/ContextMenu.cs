@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TInventory.ContextMenu.Action;
 using TInventory.Item;
@@ -6,45 +7,51 @@ using UnityEngine;
 
 namespace TInventory.ContextMenu
 {
-    // TODO add summaries 
     public class ContextMenu : MonoBehaviour
     {
-        private float optionHeight;
         
         [SerializeField]
         private GameObject optionPrefab;
         
-        [SerializeField] [HideInInspector]
-        private RectTransform rectTransform;
+        private RectTransform _rectTransform;
 
-        private List<ContextMenuOption> options = new List<ContextMenuOption>();
+        private List<ContextMenuOption> _options = new List<ContextMenuOption>();
         
+        private float _optionHeight;
+        
+        public bool IsOpen => gameObject.activeSelf;
         
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
+            _rectTransform = GetComponent<RectTransform>();
 
             InputHandler.KeyReleasedHandler += Clicked;
 
-            optionHeight = optionPrefab.GetComponent<RectTransform>().sizeDelta.y;
+            _optionHeight = optionPrefab.GetComponent<RectTransform>().sizeDelta.y;
             
             Hide();
         }
 
-
+        /// <summary>
+        /// Updates the size of the menu to fit all of the options
+        /// </summary>
         private void UpdateMenuSize()
         {
-            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, options.Count * optionHeight);
+            _rectTransform.sizeDelta = new Vector2(_rectTransform.sizeDelta.x, _options.Count * _optionHeight);
         }
         
+        
+        /// <summary>
+        /// Shows menu if user right clicks an item or hides it if user clicks else where
+        /// </summary>
+        /// <param name="key"></param>
         private void Clicked(InputHandler.Key key)
         {
-            
             if(key == InputHandler.Key.Primary) Hide();
             
             if(key != InputHandler.Key.Secondary || ItemMover.instance.IsHoldingItem()) return;
 
-            var clickedItem = Inventory.GetItemAt(InputHandler.GetCursorPosition());
+            var clickedItem = InventoryUtility.GetItemAt(InputHandler.GetCursorPosition());
 
             if (!(clickedItem is null))
             {
@@ -54,16 +61,49 @@ namespace TInventory.ContextMenu
             }
         }
         
-        
-        private void ShowMenu(AItem item)
+        /// <summary>
+        /// Shows context menu
+        /// </summary>
+        /// <param name="item">Item</param>
+        private void ShowMenu(Item.Item item)
         {
             
-            PopulateMenu(item.contextMenuActions);
+            PopulateMenu(item.GetContextMenuActions());
 
             transform.position = InputHandler.GetCursorPosition();
+
+            StartCoroutine(IsInactive(InputHandler.GetCursorPosition()));
         }
 
-        private void PopulateMenu(List<IAction> actions)
+        
+        /// <summary>
+        /// Hides window if cursor is too far from menu
+        /// </summary>
+        /// <param name="clickedPosition"></param>
+        /// <returns>null</returns>
+        private IEnumerator IsInactive(Vector2 clickedPosition)
+        {
+            Vector2 position = transform.position +
+                               new Vector3(_rectTransform.sizeDelta.x / 2, _rectTransform.sizeDelta.y / 2);
+            
+            while (IsOpen)
+            {
+                if (Vector2.Distance(position, InputHandler.GetCursorPosition()) > 
+                    ((_options.Count - 1) * _optionHeight) + 100)
+                {
+                    Hide();
+                    break;
+                }
+                
+                yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Populate menu with options
+        /// </summary>
+        /// <param name="actions"></param>
+        private void PopulateMenu(List<IOption> actions)
         {
             foreach (var action in actions)
             {
@@ -73,9 +113,13 @@ namespace TInventory.ContextMenu
             UpdateMenuSize();
         }
 
-        private void AddOption(IAction action)
+        /// <summary>
+        /// Add option to menu
+        /// </summary>
+        /// <param name="option"></param>
+        private void AddOption(IOption option)
         {
-            var option = Instantiate(optionPrefab, transform).GetComponent<ContextMenuOption>();
+            var optionObj = Instantiate(optionPrefab, transform).GetComponent<ContextMenuOption>();
             
             if (option is null)
             {
@@ -83,27 +127,37 @@ namespace TInventory.ContextMenu
                 return;
             }
             
-            options.Add(option);
+            _options.Add(optionObj);
             
-            option.InitializeOption(action);
+            optionObj.InitializeOption(option);
         }
 
+        /// <summary>
+        /// Clears all options
+        /// </summary>
         private void ClearOptions()
         {
-            foreach (var option in options)
+            foreach (var option in _options)
             {
                 Destroy(option.gameObject);
             }
             
-            options.Clear();
+            _options.Clear();
         }
         
+        /// <summary>
+        /// Show context menu
+        /// </summary>
         public void Show()
         {
             transform.SetAsLastSibling();
             gameObject.SetActive(true);
         }
 
+        
+        /// <summary>
+        /// Hide context menu
+        /// </summary>
         public void Hide()
         { 
             ClearOptions();

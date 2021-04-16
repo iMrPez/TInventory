@@ -1,4 +1,5 @@
-﻿using TInventory.ContextMenu.Action;
+﻿using System.Collections.Generic;
+using TInventory.ContextMenu.Action;
 using TInventory.Item.Action;
 
 namespace TInventory.Item
@@ -6,25 +7,26 @@ namespace TInventory.Item
     /// <summary>
     /// Basic misc item that can be stacked.
     /// </summary>
-    public class BasicItem : AItem
+    public class BasicItem : Item
     {
-        private void Start()
+        
+        public override List<IItemAction> GetReleaseActions()
         {
-            AddItemReleaseActions();
+            
+            return new List<IItemAction>()
+            {
+                new PlaceAction(),
+                new StackAction(),
+                new AttachAction()
+            };
         }
 
-        /// <summary>
-        /// Adds inventory item release actions, these are used when an item is picked up and released.
-        /// </summary>
-        private void AddItemReleaseActions()
+        public override List<IOption> GetContextMenuActions()
         {
-            // Add inventory release actions
-            itemReleaseActions.Add(new PlaceAction());
-            itemReleaseActions.Add(new StackAction());
-            itemReleaseActions.Add(new AttachAction());
-            
-            // Add Context Menu Options
-            contextMenuActions.Add(new DeleteAction(this));
+            return new List<IOption>()
+            {
+                new DeleteOption(this)
+            };
         }
     }
 }

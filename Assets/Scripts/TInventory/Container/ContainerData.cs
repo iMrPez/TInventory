@@ -9,23 +9,31 @@ namespace TInventory.Container
 
         public Filter.Filter filter;
 
-        private int[] flattenedContainer = new int[1];
+        private int[] _flattenedContainer = new int[1];
 
-        public int[,] Container => ExpandArray(flattenedContainer, Width, Height);
+        public int[,] Container => ExpandArray(_flattenedContainer, Width, Height);
 
-        // TODO EDIT
         public int Width = 1;
         public int Height = 1;
 
+        /// <summary>
+        /// Sets container
+        /// </summary>
+        /// <param name="container"></param>
         public void SetContainer(int[,] container)
         {
-            
-            flattenedContainer = FlattenArray(container);
+            _flattenedContainer = FlattenArray(container);
 
             Width = container.GetLength(0);
             Height = container.GetLength(1);
         }
         
+        
+        /// <summary>
+        /// Flatten container to a saveable state
+        /// </summary>
+        /// <param name="arrayToConvert"></param>
+        /// <returns></returns>
         public int[] FlattenArray(int[,] arrayToConvert)
         {
             int[] convertedArray = new int[arrayToConvert.Length];
@@ -41,7 +49,14 @@ namespace TInventory.Container
             return convertedArray;
         }
         
-        public int[,] ExpandArray(int[] arrayToConvert, int width, int height)
+        /// <summary>
+        /// Expand container into a 2d matrix
+        /// </summary>
+        /// <param name="flattenedContainer">Flattened Container</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
+        /// <returns>Container</returns>
+        public int[,] ExpandArray(int[] flattenedContainer, int width, int height)
         {
             int[,] convertedArray = new int[width, height];
 
@@ -50,9 +65,9 @@ namespace TInventory.Container
             for (int currentWidth = 0; currentWidth < width; currentWidth++)
             for (int currentHeight = 0; currentHeight < height; currentHeight++)
             {
-                if(currentCount >= arrayToConvert.Length) continue;
+                if(currentCount >= flattenedContainer.Length) continue;
                 
-                convertedArray[currentWidth, currentHeight] = arrayToConvert[currentCount];
+                convertedArray[currentWidth, currentHeight] = flattenedContainer[currentCount];
                 currentCount++;
             }
 

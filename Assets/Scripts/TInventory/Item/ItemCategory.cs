@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Inventory.Item;
 using UnityEngine;
 
 namespace TInventory.Item
@@ -11,6 +10,11 @@ namespace TInventory.Item
     {
         public List<TypeCategory> types;
         
+        /// <summary>
+        /// Get rarity of item
+        /// </summary>
+        /// <param name="itemData"></param>
+        /// <returns>Rarity</returns>
         public float GetRarity(ItemData itemData)
         {
             foreach (var type in types)

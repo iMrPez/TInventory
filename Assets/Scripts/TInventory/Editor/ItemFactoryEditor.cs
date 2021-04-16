@@ -9,31 +9,61 @@ namespace TInventory.Editor
     [CustomEditor(typeof(ItemFactory))]
     public class ItemFactoryEditor : UnityEditor.Editor
     {
-        private ReorderableList list;
+        private ReorderableList _itemPrefabs;
+
+        private ReorderableList _items;
 
         private void OnEnable()
         {
             ItemFactory itemFactory = (ItemFactory) target;
             
-            list = new ReorderableList(serializedObject, 
+            // Init
+            _itemPrefabs = new ReorderableList(serializedObject, 
                 serializedObject.FindProperty("itemPrefabs"), 
                 true, true, true, true);
+            _items = new ReorderableList(serializedObject, serializedObject.FindProperty("items"), 
+                false, true, true, true);
 
-            list.drawElementCallback = (rect, index, isActive, isFocused) => DrawElements(index, rect);
+            // Elements
+            _itemPrefabs.drawElementCallback = (rect, index, isActive, isFocused) => DrawPrefabElements(index, rect);
+            _items.drawElementCallback = (rect, index, isActive, isFocused) => DrawItemElements(index, rect);
 
-            list.drawHeaderCallback = GetHeaderTitle;
+            // Headers
+            _itemPrefabs.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Item Prefabs");
+            _items.drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Items");
             
-            list.onRemoveCallback = RemoveItem;
+            // On Remove
+            _itemPrefabs.onRemoveCallback = RemoveItem;
+            _items.onRemoveCallback = RemoveItem;
 
-            list.onCanAddCallback = reorderableList =>
-                (list.count < Enum.GetNames(typeof(ItemPrefab.ItemPrefabType)).Length);
+            // Can Add
+            _itemPrefabs.onCanAddCallback = reorderableList =>
+                (_itemPrefabs.count < Enum.GetNames(typeof(ItemPrefab.ItemPrefabType)).Length);
             
-            list.onAddCallback = reorderableList => AddItem(itemFactory);
+            // Add
+            _itemPrefabs.onAddCallback = reorderableList => AddItem(itemFactory);
+        }
+        
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            _itemPrefabs.DoLayoutList();
+            _items.DoLayoutList();
+            serializedObject.ApplyModifiedProperties();
+        }
+        
+        private void DrawItemElements(int index, Rect rect)
+        {
+            var element = _items.serializedProperty.GetArrayElementAtIndex(index);
+            rect.y += 2;
+            EditorGUI.PropertyField(
+                new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight),
+                element, GUIContent.none);
         }
 
-        private void DrawElements(int index, Rect rect)
+        private void DrawPrefabElements(int index, Rect rect)
         {
-            var element = list.serializedProperty.GetArrayElementAtIndex(index);
+            var element = _itemPrefabs.serializedProperty.GetArrayElementAtIndex(index);
             rect.y += 2;
             EditorGUI.LabelField(
                 new Rect(rect.x, rect.y, 80, EditorGUIUtility.singleLineHeight)
@@ -43,18 +73,13 @@ namespace TInventory.Editor
                 new Rect(rect.x + 90, rect.y, rect.width - 90, EditorGUIUtility.singleLineHeight),
                 element.FindPropertyRelative("prefab"), GUIContent.none);
         }
-
         
-        private static void GetHeaderTitle(Rect rect)
-        {
-            EditorGUI.LabelField(rect, "Item Prefabs");
-        }
 
         
         private static void RemoveItem(ReorderableList l)
         {
             if (EditorUtility.DisplayDialog("Warning!",
-                "Are you sure you want to delete this item prefab?", "Yes", "No"))
+                "Are you sure you want to delete this?", "Yes", "No"))
             {
                 ReorderableList.defaultBehaviours.DoRemoveButton(l);
             }
@@ -85,14 +110,6 @@ namespace TInventory.Editor
                 }
             }
             itemFactory.itemPrefabs.Add(new ItemPrefab(type, null));
-        }
-
-        
-        public override void OnInspectorGUI()
-        {   
-            serializedObject.Update();
-            list.DoLayoutList();
-            serializedObject.ApplyModifiedProperties();
         }
     }
 }

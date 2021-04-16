@@ -11,18 +11,19 @@ namespace TInventory.Container
         
         public RectTransform rectTransform;
         
-        private Vector2 currentPosition;
+        private Vector2 _currentPosition;
 
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
         }
 
-        public void Init(int id, Vector2 position, Vector2 size, Container container)
+        
+        public void Initialize(int id, Vector2 position, Vector2 size, Container container)
         {
             this.id = id;
             this.position = position;
-            currentPosition = position;
+            _currentPosition = position;
             this.size = size;
             parentContainer = container;
         }
@@ -34,16 +35,16 @@ namespace TInventory.Container
         /// <param name="y">y Position</param>
         public void AddPosition(int x, int y)
         {
-            if (currentPosition.x < x)
+            if (_currentPosition.x < x)
             {
                 size.x += 1;
-                currentPosition.x += 1;
+                _currentPosition.x += 1;
             }
 
-            if (currentPosition.y < y)
+            if (_currentPosition.y < y)
             {
                 size.y += 1;
-                currentPosition.y += 1;
+                _currentPosition.y += 1;
             }
         }
     }

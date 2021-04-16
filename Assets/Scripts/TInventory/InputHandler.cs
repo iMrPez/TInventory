@@ -23,6 +23,7 @@ namespace TInventory
             TriggerRotateEvents();
         }
 
+        
         private void TriggerPrimaryEvents()
         {
             if (GetPrimaryButtonDown())

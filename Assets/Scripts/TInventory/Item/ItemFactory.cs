@@ -1,40 +1,23 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Inventory.Item;
-using TInventory.Container;
-using Unity.Mathematics;
 using UnityEngine;
 using Random = System.Random;
 
 namespace TInventory.Item
 {
-    
-    
     public class ItemFactory : MonoBehaviour
     {
+        public static ItemFactory Instance;
         
+        public List<ItemPrefab> itemPrefabs = new List<ItemPrefab>();
         
-        
-        /// <summary>
-        /// Item factory singleton instance.
-        /// </summary>
-        public static ItemFactory instance;
-        
-        
-        public List<ItemPrefab> itemPrefabs;
-        
-        /// <summary>
-        /// Item Data
-        /// </summary>
-        [SerializeField]
-        private List<ItemData> items;
+        public List<ItemData> items;
         
 
         private void Awake()
         {
-            instance = this;
+            Instance = this;
         }
         
         /// <summary>
@@ -56,23 +39,34 @@ namespace TInventory.Item
         }
 
         /// <summary>
-        /// Create basic items based on id.
+        /// Create items based on id.
         /// </summary>
-        /// <param name="prefabType">Type of prefab to create</param>
-        /// <param name="id">Id of item to lookup</param>
-        /// <param name="container">Container the item will be contained in</param>
+        /// <param name="prefabType">Type of prefab</param>
+        /// <param name="id">Id</param>
+        /// <param name="container">Container</param>
         /// <returns>Returns initialized item</returns>
-        public AItem CreateItem(int id)
+        public Item CreateItem(int id)
         {
             var itemData = GetItemById(id);
 
             return CreateItem(itemData);
         }
 
+        /// <summary>
+        /// Get prefab that match type
+        /// </summary>
+        /// <param name="prefabType"></param>
+        /// <returns>Prefab</returns>
         public GameObject GetItemPrefab(ItemPrefab.ItemPrefabType prefabType) =>
             itemPrefabs.First(i => i.type == prefabType).prefab;
         
-        public AItem CreateItem(ItemData itemData)
+        
+        /// <summary>
+        /// Creates item based on itemData
+        /// </summary>
+        /// <param name="itemData">Item Data</param>
+        /// <returns>Item</returns>
+        public Item CreateItem(ItemData itemData)
         {
             if (itemData != null)
             {
@@ -92,9 +86,14 @@ namespace TInventory.Item
             return null;
         }
 
+        /// <summary>
+        /// Get list of items that match filter with their rarity according to the filters category
+        /// </summary>
+        /// <param name="filter">Filter</param>
+        /// <returns>Item and its rarity</returns>
         public static IEnumerable<(ItemData item, float rarity)> GetFilteredItemList(Filter.Filter filter)
         {
-            foreach (var item in instance.items)
+            foreach (var item in Instance.items)
             {
                 var rarity = filter.allowedCategory.GetRarity(item);
                 
@@ -105,6 +104,12 @@ namespace TInventory.Item
             }
         }
 
+        
+        /// <summary>
+        /// Gets random item from supplied list based on its rarity
+        /// </summary>
+        /// <param name="items">Items and their rarity</param>
+        /// <returns>Random Item</returns>
         public static ItemData GetRandomItemFromList(List<(ItemData item, float rarity)> items)
         {
             var totalRarity = items.Sum(x => x.rarity);
@@ -120,25 +125,6 @@ namespace TInventory.Item
             }).Single(x => x.MinRarity <= randomNumber && x.MaxRarity >= randomNumber);
 
             return item.item;
-        }
-    }
-
-    [Serializable]
-    public struct ItemPrefab
-    {
-        public enum ItemPrefabType
-        {
-            Basic = 0,
-            Weapon = 1
-        }
-        
-        public ItemPrefabType type;
-        public GameObject prefab;
-
-        public ItemPrefab(ItemPrefabType type, GameObject prefab)
-        {
-            this.type = type;
-            this.prefab = prefab;
         }
     }
 }

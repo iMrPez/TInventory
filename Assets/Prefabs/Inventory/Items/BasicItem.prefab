@@ -359,17 +359,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a2ecb06c77d184ea80dd5e79d34b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 0}
-  size: {x: 0, y: 0}
-  slotPosition: {x: 0, y: 0}
-  containerGroup: {fileID: 0}
-  attachedSlot: {fileID: 0}
-  defaultColor: {r: 0.3490566, g: 0.3490566, b: 0.3490566, a: 0.39215687}
-  iconImage: {fileID: 4747291460860789151}
-  iconRect: {fileID: 0}
-  itemNameText: {fileID: 1667375863}
-  itemCountText: {fileID: 529944165}
-  rectTransform: {fileID: 0}
+  _defaultColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 0.49019608}
+  _iconImage: {fileID: 4747291460860789151}
+  _itemNameText: {fileID: 1667375863}
+  _itemCountText: {fileID: 529944165}
 --- !u!1 &4747291460860789153
 GameObject:
   m_ObjectHideFlags: 0

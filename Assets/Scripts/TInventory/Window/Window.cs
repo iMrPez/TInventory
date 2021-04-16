@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TInventory.Container;
 using TMPro;
@@ -8,61 +6,58 @@ using UnityEngine.UI;
 
 namespace TInventory.Window
 {
+    
+    [RequireComponent(typeof(RectTransform))]
     public class Window : MonoBehaviour
     {
-
-
+        
         /// <summary>
         /// Toggle for if the window can be moved or not.
         /// </summary>
-        private bool isLocked = false;
-
+        private bool _isLocked;
         
+        /// <summary>
+        /// Will hide window instead of fully deleting and saving the window.
+        /// </summary>
         [Header("Settings")] 
-        public bool hideWindowOnClose = false;
+        public bool hideWindowOnClose;
         
         /// <summary>
         /// If checked, any containers set in the currently added containers will be shown
         /// </summary>
-        [SerializeField]
-        private bool startWithContainers;
+        [SerializeField] private bool _startWithContainers;
 
-        [SerializeField]
-        private List<ContainerData> startContainers = new List<ContainerData>();
+        /// <summary>
+        /// List of containers that the window should open with
+        /// </summary>
+        [SerializeField] private List<ContainerData> _startContainers = new List<ContainerData>();
         
-        /// <summary>
-        /// List of currently show containers
-        /// </summary>
-        private List<Container.Container> containers = new List<Container.Container>();
-
-        /// <summary>
-        /// Container Rect Transform.
-        /// </summary>
-        private RectTransform rectTransform;
+        private RectTransform _rectTransform;
 
         /// <summary>
         /// Container scroll viewport.
         /// </summary>
-        [SerializeField]
-        private ScrollRect scrollView;
+        [SerializeField] private ScrollRect _scrollView;
         
         /// <summary>
         /// Container content, used as parent for slots and items.
         /// </summary>
-        [SerializeField]
-        private RectTransform windowContent;
-
-        [SerializeField]
-        private VerticalLayoutGroup layoutGroup;
-
-        [SerializeField] 
-        private TextMeshProUGUI titleText;
+        [SerializeField] private RectTransform _windowContent;
+        
+        private VerticalLayoutGroup _layoutGroup;
+        
+        [SerializeField] private TextMeshProUGUI _titleText;
         
         private void Awake()
         {
-            rectTransform = GetComponent<RectTransform>();
+            _rectTransform = GetComponent<RectTransform>();
+            _layoutGroup = _windowContent.GetComponent<VerticalLayoutGroup>();
             
-            windowContent.localPosition = Vector3.zero;
+            if(_scrollView is null) Debug.LogError("Scroll View is not set!", this);
+            if(_windowContent is null) Debug.LogError("Window content is not set!", this);
+            if(_layoutGroup is null) Debug.LogError("Layout group is not placed on content!", _windowContent);
+            
+            _windowContent.localPosition = Vector3.zero;
         }
 
         private void Start()
@@ -71,16 +66,16 @@ namespace TInventory.Window
         }
 
         /// <summary>
-        /// TODO ADD SUMMARY
+        /// Initializes the list of start containers if the option is checked
         /// </summary>
         private void InitializeStartContainers()
         {
-            if (startWithContainers)
+            if (_startWithContainers)
             {
-                foreach (var containerData in startContainers)
+                foreach (var containerData in _startContainers)
                 {
                     var container = Inventory.CreateNewContainer();
-                    container.Initialize(containerData);
+                    container.InitializeContainer(containerData);
 
                     AddContent(container.GetComponent<RectTransform>());
                 }
@@ -91,12 +86,15 @@ namespace TInventory.Window
         /// Gets Containers RectTransform.
         /// </summary>
         /// <returns>Return Container's RectTransform.</returns>
-        public RectTransform GetRect() => rectTransform;
+        public RectTransform GetRect() => _rectTransform;
 
-        // TODO ADD SUMMARY
+        /// <summary>
+        /// Sets window title
+        /// </summary>
+        /// <param name="text"></param>
         public void SetWindowTitle(string text)
         {
-            titleText.text = text;
+            _titleText.text = text;
         }
         
         /// <summary>
@@ -106,65 +104,65 @@ namespace TInventory.Window
         /// <param name="height">Height</param>
         public void SetWindowSize(float width, float height)
         {
-            rectTransform.sizeDelta = new Vector2(width, height);
+            _rectTransform.sizeDelta = new Vector2(width, height);
         }
 
+        /// <summary>
+        /// Sets content size
+        /// </summary>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
         private void SetContentSize(float width, float height)
         {
-            windowContent.sizeDelta = new Vector2(width, height);
+            _windowContent.sizeDelta = new Vector2(width, height);
         }
 
-        public bool IsLocked() => isLocked;
+        /// <summary>
+        /// Check if the window is locked in place
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLocked() => _isLocked;
         
-        // TODO ADD SUMMARY
+        /// <summary>
+        /// Increase the size of the content
+        /// </summary>
+        /// <param name="height">Height</param>
         private void IncreaseContentSize(float height)
         {
-            var newSize = windowContent.sizeDelta + new Vector2(0, height);
+            var newSize = _windowContent.sizeDelta + new Vector2(0, height);
 
             SetContentSize(newSize.x, newSize.y);
         }
         
-        // TODO ADD SUMMARY
+        /// <summary>
+        /// Decrease the size of the content
+        /// </summary>
+        /// <param name="height"></param>
         private void DecreaseContentSize(float height)
         {
-            var newSize = windowContent.sizeDelta - new Vector2(0, height);
+            var newSize = _windowContent.sizeDelta - new Vector2(0, height);
 
             SetWindowSize(newSize.x, newSize.y);
         }
 
-        /*private void HeaderClicked()
-        {
-            transform.SetAsFirstSibling();
-            StartCoroutine(DraggingHeader());
-        }
-
-        private IEnumerator DraggingHeader()
-        {
-            while (Input.GetMouseButton(0))
-            {
-                Debug.Log("Testin");
-                yield return null;
-            }
-        }*/
-        
         /// <summary>
         /// Moves the container's viewport if an item is being held near and edge of the viewport.
         /// </summary>
         public void UpdateViewport()
         {
             var value = NormalizeValue(
-                scrollView.viewport.transform.position.y - Input.mousePosition.y,
-                scrollView.viewport.rect.height);
+                _scrollView.viewport.transform.position.y - Input.mousePosition.y,
+                _scrollView.viewport.rect.height);
 
-            if (value > TInventory.Inventory.instance.scrollDownAt)
+            if (value > Inventory.Instance.scrollDownAt)
             {
-                scrollView.verticalNormalizedPosition =
-                    Mathf.Clamp01(scrollView.verticalNormalizedPosition - TInventory.Inventory.instance.scrollSpeed * Time.deltaTime);
+                _scrollView.verticalNormalizedPosition =
+                    Mathf.Clamp01(_scrollView.verticalNormalizedPosition - Inventory.Instance.scrollSpeed * Time.deltaTime);
             }
-            else if (value < TInventory.Inventory.instance.scrollUpAt)
+            else if (value < Inventory.Instance.scrollUpAt)
             {
-                scrollView.verticalNormalizedPosition =
-                    Mathf.Clamp01(scrollView.verticalNormalizedPosition + TInventory.Inventory.instance.scrollSpeed * Time.deltaTime);
+                _scrollView.verticalNormalizedPosition =
+                    Mathf.Clamp01(_scrollView.verticalNormalizedPosition + Inventory.Instance.scrollSpeed * Time.deltaTime);
             }
         }
 
@@ -181,9 +179,9 @@ namespace TInventory.Window
             }
 
             // Set content's parent to the window
-            contentToAdd.transform.SetParent(windowContent);
+            contentToAdd.transform.SetParent(_windowContent);
             
-            IncreaseContentSize(contentToAdd.rect.height + layoutGroup.spacing);
+            IncreaseContentSize(contentToAdd.rect.height + _layoutGroup.spacing);
         }
         
         /// <summary>
@@ -192,14 +190,22 @@ namespace TInventory.Window
         /// <param name="value">Locked</param>
         public void SetLock(bool value)
         {
-            isLocked = value;
+            _isLocked = value;
         }
 
+        
+        /// <summary>
+        /// Hides Window
+        /// </summary>
         public void Hide()
         {
             gameObject.SetActive(false);
         }
 
+        
+        /// <summary>
+        /// Closes Window
+        /// </summary>
         public void Close()
         {
             if (!hideWindowOnClose)

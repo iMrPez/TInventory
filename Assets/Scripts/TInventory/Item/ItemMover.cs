@@ -26,47 +26,41 @@ namespace TInventory.Item
         private Color unplaceableColor;
         
         /// <summary>
-        /// Item's default color. TODO replace with rarity specific colors.
+        /// The item currently being held
         /// </summary>
-        [SerializeField]
-        private Color defaultColor;
+        private Item _heldItem;
         
         /// <summary>
-        /// The item currently being held.
+        /// The last time a touch occured
         /// </summary>
-        private AItem heldItem;
+        private float _lastTouchTime;
         
         /// <summary>
-        /// The last time a touch occured.
+        /// The held item's position before it was picked up
         /// </summary>
-        private float lastTouchTime;
-        
-        /// <summary>
-        /// The held item's position before it was picked up.
-        /// </summary>
-        private Vector3 startPos;
+        private Vector3 _startPos;
 
         /// <summary>
-        /// TODO MAKE SUMMARY
+        /// The held item's containerGroup before it was picked up
         /// </summary>
-        private ContainerGroup startContainerGroup;
+        private ContainerGroup _startContainerGroup;
         
         /// <summary>
-        /// The held item's rotation before it was picked up.
+        /// The held item's rotation before it was picked up
         /// </summary>
-        private bool startRotation;
+        private bool _startRotation;
         
         /// <summary>
-        /// Action to be done when the item is released.
+        /// Action to be done when the item is released
         /// </summary>
-        private IItemAction releasedAction;
+        private IItemAction _releasedAction;
 
         /// <summary>
         /// Clicked Item
         /// </summary>
-        private AItem clickedItem;
+        private Item _clickedItem;
 
-        private Vector3 clickedPosition = Vector3.zero;
+        private Vector3 _clickedPosition = Vector3.zero;
         
         public static event ItemMovedDelegate ItemPlacedHandler;
 
@@ -80,10 +74,7 @@ namespace TInventory.Item
 
         private void Update()
         {
-
-            // TODO RETURN IF INVENTORY IS NOT OPEN
             
-            // TODO REMOVE - for testings
             if (InputHandler.GetRotateButtonDown())
             {
                 RotateHeldItem();
@@ -103,19 +94,19 @@ namespace TInventory.Item
         {
             if (InputHandler.GetPrimaryButtonDown())
             {
-                clickedItem = Inventory.GetItemAt(InputHandler.GetCursorPosition());
+                _clickedItem = InventoryUtility.GetItemAt(InputHandler.GetCursorPosition());
                 
-                if (clickedItem is null) return false;
+                if (_clickedItem is null) return false;
                 
-                clickedPosition = Input.mousePosition;
+                _clickedPosition = Input.mousePosition;
                 
-                lastTouchTime = Time.time;
+                _lastTouchTime = Time.time;
             }
 
             if (InputHandler.GetPrimaryButton())
             {
-                return (Time.time - lastTouchTime > touchHoldTime || 
-                        Vector3.Distance(InputHandler.GetCursorPosition(), clickedPosition) > Inventory.instance.slotSize / 2);
+                return (Time.time - _lastTouchTime > touchHoldTime || 
+                        Vector3.Distance(InputHandler.GetCursorPosition(), _clickedPosition) > Inventory.Instance.slotSize / 2);
             }
             
             return false;
@@ -126,18 +117,19 @@ namespace TInventory.Item
         /// </summary>
         private void HoldItemAtTouch()
         {
+            if (_clickedItem is null) return;
             
-            heldItem = clickedItem;
+            _heldItem = _clickedItem;
             // Trigger events
-            ItemPickedUpHandler?.Invoke(heldItem);
+            ItemPickedUpHandler?.Invoke(_heldItem);
+        
+            _startPos = _heldItem.SlotPosition;
+            _startContainerGroup = _heldItem.ContainerGroup;
+            _startRotation = _heldItem.IsRotated;
 
-            startPos = heldItem.slotPosition;
-            startContainerGroup = heldItem.containerGroup;
-            startRotation = heldItem.IsRotated();
+            _heldItem.ContainerGroup?.parentContainer.RemoveItem(_heldItem);
 
-            heldItem.containerGroup?.parentContainer.RemoveItem(heldItem);
-
-            heldItem.attachedSlot?.Detach(heldItem);
+            _heldItem.AttachedSlot?.Detach();
 
             StartCoroutine(HoldItem());
             
@@ -149,21 +141,21 @@ namespace TInventory.Item
         private IEnumerator HoldItem()
         {
             // Get currently open container
-            var containerAtTouch = Inventory.GetContainerAt(InputHandler.GetCursorPosition());
+            var containerAtTouch = InventoryUtility.GetContainerAt(InputHandler.GetCursorPosition());
             
-            AItem itemAtTouch = null;
+            Item itemAtTouch = null;
             
             while (InputHandler.GetPrimaryButton())
             {
                 if (IsHoldingItem())
                 {
-                    containerAtTouch = Inventory.GetContainerAt(InputHandler.GetCursorPosition());
+                    containerAtTouch = InventoryUtility.GetContainerAt(InputHandler.GetCursorPosition());
 
-                    var window = Inventory.GetWindowAtMousePosition();
+                    var window = InventoryUtility.GetWindowAtMousePosition();
 
                     window?.UpdateViewport();
 
-                    itemAtTouch = Inventory.GetItemAt(InputHandler.GetCursorPosition(), heldItem.gameObject);
+                    itemAtTouch = InventoryUtility.GetItemAt(InputHandler.GetCursorPosition(), _heldItem.gameObject);
 
                     UpdateHeldItem(containerAtTouch, itemAtTouch);
                 }
@@ -177,30 +169,30 @@ namespace TInventory.Item
         /// Updates background color and position of held item.
         /// </summary>
         /// <param name="openContainer">Currently Open Container</param>
-        private void UpdateHeldItem(TInventory.Container.Container openContainer, AItem itemAtTouch)
+        private void UpdateHeldItem(TInventory.Container.Container openContainer, Item itemAtTouch)
         {
-            heldItem.transform.position = (Vector2) InputHandler.GetCursorPosition();
+            _heldItem.transform.position = (Vector2) InputHandler.GetCursorPosition();
 
-            heldItem.transform.SetParent(Inventory.instance.transform);
-            heldItem.transform.SetAsLastSibling();
+            _heldItem.transform.SetParent(Inventory.Instance.windowCanvas);
+            _heldItem.transform.SetAsLastSibling();
 
-            releasedAction = null;
+            _releasedAction = null;
             
             bool colorSet = false;
-            foreach (var itemAction in heldItem.itemReleaseActions)
+            foreach (var itemAction in _heldItem.GetReleaseActions())
             {
-                if (itemAction.CanAct(heldItem, itemAtTouch, openContainer))
+                if (itemAction.CanAct(_heldItem, itemAtTouch, openContainer))
                 {
                     
                     colorSet = true;
-                    heldItem.SetBackgroundColor(itemAction.GetActionColor());
-                    releasedAction = itemAction;
+                    _heldItem.SetBackgroundColor(itemAction.GetActionColor());
+                    _releasedAction = itemAction;
                 }
             }
 
             if (!colorSet)
             {
-                heldItem.SetBackgroundColor(unplaceableColor);
+                _heldItem.SetBackgroundColor(unplaceableColor);
             }
         }
         
@@ -209,19 +201,19 @@ namespace TInventory.Item
         /// </summary>
         /// <param name="openContainer">Currently Open Container</param>
         /// <param name="itemAtTouch"></param>
-        private void HeldItemReleased(TInventory.Container.Container openContainer = null, AItem itemAtTouch = null)
+        private void HeldItemReleased(TInventory.Container.Container openContainer = null, Item itemAtTouch = null)
         {
             // Check if there is an action to do
-            if (!(releasedAction is null))
+            if (!(_releasedAction is null))
             {
                 // Do the action and if it fails, return the held item to previous location
-                if (!releasedAction.Act(heldItem, itemAtTouch, openContainer))
+                if (!_releasedAction.Act(_heldItem, itemAtTouch, openContainer))
                 {
                     ReturnHeldItem();
                 }
                 else
                 {
-                    ItemPlacedHandler?.Invoke(heldItem);
+                    ItemPlacedHandler?.Invoke(_heldItem);
                 }
             }
             else
@@ -238,7 +230,7 @@ namespace TInventory.Item
         /// <returns>Returns true if an item is currently being held.</returns>
         public bool IsHoldingItem()
         {
-            return !(heldItem is null);
+            return !(_heldItem is null);
         }
         
         /// <summary>
@@ -246,8 +238,8 @@ namespace TInventory.Item
         /// </summary>
         public void RotateHeldItem()
         {
-            if(heldItem != null)
-                heldItem.Rotate();
+            if(_heldItem != null)
+                _heldItem.Rotate();
         }
         
         /// <summary>
@@ -255,20 +247,19 @@ namespace TInventory.Item
         /// </summary>
         private void ReturnHeldItem()
         {
-            
             // Rotate to original rotation before grabbing
-            if (startRotation != heldItem.IsRotated()) heldItem.Rotate();
+            if (_startRotation != _heldItem.IsRotated) _heldItem.Rotate();
 
-            if (!(heldItem.attachedSlot is null))
+            if (!(_heldItem.AttachedSlot is null))
             {
-                heldItem.attachedSlot.Attach(heldItem);
+                _heldItem.AttachedSlot.Attach(_heldItem);
             }
-            else if (!(heldItem.containerGroup is null))
+            else if (!(_heldItem.ContainerGroup is null))
             {
-                heldItem.containerGroup.parentContainer.PlaceItemAt(startPos, startContainerGroup, heldItem);
+                _heldItem.ContainerGroup.parentContainer.PlaceItemAt(_startPos, _startContainerGroup, _heldItem);
             }
             
-            ItemPlacedHandler?.Invoke(heldItem);
+            ItemPlacedHandler?.Invoke(_heldItem);
         }
 
         /// <summary>
@@ -276,7 +267,7 @@ namespace TInventory.Item
         /// </summary>
         private void ResetHold()
         {
-            heldItem = null;
+            _heldItem = null;
         }
         
     }
