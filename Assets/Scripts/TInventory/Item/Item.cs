@@ -58,7 +58,7 @@ namespace TInventory.Item
                         RectTransform = GetComponent<RectTransform>();
                         _background = GetComponent<Image>();
                 }
-
+                
                 public abstract List<IItemAction> GetReleaseActions();
                 
                 public abstract List<IOption> GetContextMenuActions();
@@ -81,6 +81,12 @@ namespace TInventory.Item
                         this.ContainerGroup = containerGroup;
                         
                         UpdateImageSize(RectTransform.sizeDelta);
+                        
+                }
+                
+                private void UpdateNameDisplay()
+                {
+                        _itemNameText.text = _data.itemName.Length > 5 * _size.x ? _data.shortName : _data.itemName;
                 }
 
                 /// <summary>
@@ -168,8 +174,11 @@ namespace TInventory.Item
                         var oldSize = _size;
                         _size = itemSize;
                         
-                        var slotSize = TInventory.Inventory.Instance.slotSize;
+                        var slotSize = Inventory.Instance.slotSize;
                         RectTransform.sizeDelta = new Vector2(slotSize * itemSize.x, slotSize * itemSize.y);
+
+                        UpdateNameDisplay();
+                        
                         return oldSize;
                 }
                 

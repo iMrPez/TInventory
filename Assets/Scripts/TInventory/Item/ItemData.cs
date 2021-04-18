@@ -21,6 +21,11 @@ namespace TInventory.Item
         public string itemName;
 
         /// <summary>
+        /// Name displayed if item name wont fit
+        /// </summary>
+        public string shortName;
+        
+        /// <summary>
         /// Items type
         /// </summary>
         public ItemType itemType;
@@ -38,6 +43,7 @@ namespace TInventory.Item
         /// <summary>
         /// Max size the image can be stretched to.
         /// </summary>
+        [Tooltip("Max amount the items image can stretch to")]
         public Vector2 maxImageSize;
         
         /// <summary>
