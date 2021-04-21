@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using TInventory.Container;
 using Unity.Mathematics;
 using UnityEditor;
@@ -22,10 +23,16 @@ namespace TInventory.Editor
         public void OnEnable()
         {
             ContainerData containerData = (ContainerData)target;
+
+            var loadedObject = ObjectHandler.Load<ContainerDataModel>(containerData.GetInstanceID());
+            if (!(loadedObject is null))
+            {
+                containerData.LoadModel(loadedObject);    
+            }
             
             _container = containerData.Container;
             
-            _newContainerSize = new Vector2Int((int) containerData.Width, (int) containerData.Height);
+            _newContainerSize = new Vector2Int(containerData.Width, containerData.Height);
 
             _filterProperty = serializedObject.FindProperty("filter");
         }
@@ -76,7 +83,7 @@ namespace TInventory.Editor
             if (GUILayout.Button("Save Container"))
             {
                 containerData.SetContainer(_container);
-                Debug.Log("Container data saved!");
+                ObjectHandler.Save(containerData, containerData.GetInstanceID());
             }
 
             serializedObject.ApplyModifiedProperties();

@@ -1,15 +1,18 @@
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace TInventory.Container
 {
     [CreateAssetMenu(fileName = "ContainerData", menuName = "Inventory/Container")]
-    public class ContainerData : ScriptableObject
+    [Serializable]
+    public class ContainerData : ScriptableObject, IManageable
     {
         public string containerName;
 
         public Filter.Filter filter;
 
-        private int[] _flattenedContainer = new int[1];
+        [SerializeField] internal int[] _flattenedContainer = new int[1];
 
         public int[,] Container => ExpandArray(_flattenedContainer, Width, Height);
 
@@ -73,6 +76,22 @@ namespace TInventory.Container
 
             return convertedArray;
         }
+        
+        public object GetModel()
+        {
+            return new ContainerDataModel(this);
+        }
+        
+        public bool LoadModel(object model)
+        {
+            ContainerDataModel m = (ContainerDataModel) model;
+            
+            containerName = m.containerName;
+            filter = m.filter;
+            _flattenedContainer = m.flattenedContainer;
+            Width = m.width;
+            Height = m.height;
+            return true;
+        }
     }
-
 }

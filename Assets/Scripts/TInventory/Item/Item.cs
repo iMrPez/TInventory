@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using TInventory.Container;
 using TInventory.ContextMenu.Action;
 using TInventory.Item.Action;
@@ -14,7 +15,7 @@ namespace TInventory.Item
         /// Item abstract class, used to add basic functionality to item.
         /// </summary>
         [RequireComponent(typeof(Image), typeof(RectTransform))]
-        public abstract class Item : MonoBehaviour
+        public abstract class Item : MonoBehaviour, IManageable
         {
                 
                 public RectTransform RectTransform { get; private set; }
@@ -78,10 +79,10 @@ namespace TInventory.Item
 
                         _iconImage.sprite = itemData.image;
 
-                        this.ContainerGroup = containerGroup;
+                        ContainerGroup = containerGroup;
                         
                         UpdateImageSize(RectTransform.sizeDelta);
-                        
+
                 }
                 
                 private void UpdateNameDisplay()
@@ -246,6 +247,22 @@ namespace TInventory.Item
                 {
                         ContainerGroup?.parentContainer.RemoveItem(this);
                         Destroy(gameObject);
+                }
+
+                public virtual object GetModel()
+                {
+                        return new ItemModel(_data.id, _isRotated, _count, ContainerGroup.id, SlotPosition);
+                }
+                
+                public virtual bool LoadModel(object Model)
+                {
+                        var m = (ItemModel) Model;
+
+                        if (m.isRotated) Rotate();
+                        
+                        SetCount(m.count);
+                        
+                        return true;
                 }
         }
 }

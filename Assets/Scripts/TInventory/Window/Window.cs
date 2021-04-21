@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TInventory.Container;
 using TMPro;
@@ -30,7 +31,7 @@ namespace TInventory.Window
         /// <summary>
         /// List of containers that the window should open with
         /// </summary>
-        [SerializeField] private List<ContainerData> _startContainers = new List<ContainerData>();
+        [SerializeField] private List<StartContainer> _startContainers = new List<StartContainer>();
         
         private RectTransform _rectTransform;
 
@@ -72,10 +73,13 @@ namespace TInventory.Window
         {
             if (_startWithContainers)
             {
-                foreach (var containerData in _startContainers)
+                foreach (var startContainer in _startContainers)
                 {
                     var container = Inventory.CreateNewContainer();
-                    container.InitializeContainer(containerData);
+
+                    container.containerId = startContainer.id;
+                    
+                    container.InitializeContainer(startContainer.containerData);
 
                     AddContent(container.GetComponent<RectTransform>());
                 }
@@ -202,6 +206,13 @@ namespace TInventory.Window
             gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Shows Window
+        /// </summary>
+        public void Show()
+        {
+            gameObject.SetActive(true);
+        }
         
         /// <summary>
         /// Closes Window
@@ -229,5 +240,13 @@ namespace TInventory.Window
         {
             return Mathf.Clamp01(value / max);
         }
+    }
+
+    [Serializable]
+    public struct StartContainer
+    {
+        public int id;
+        public ContainerData containerData;
+        
     }
 }

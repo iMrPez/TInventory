@@ -161,9 +161,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 944470950754032733}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cb4877fe6ac8504fa33df7d7186895b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1fb9143e74910d146ae2895215037c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  titleText: {fileID: 0}
-  containerData: {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
-  items: []
+  TitleText: {fileID: 0}
+  _containerData: {fileID: 0}
+  _items: []
+  containerId: 0

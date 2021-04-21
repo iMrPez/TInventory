@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 
 namespace TInventory
@@ -27,12 +30,16 @@ namespace TInventory
         public float margin;
         public float slotSize;
         
+        
+        
         private void Awake()
         {
             if(Instance != null) Debug.LogError("More then one instance of Inventory!", Instance);
             Instance = this;
         }
 
+       
+        
         /// <summary>
         /// Creates New Container
         /// </summary>

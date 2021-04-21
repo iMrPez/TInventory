@@ -3,6 +3,7 @@ using System.Linq;
 using TInventory.Container;
 using TInventory.Filter;
 using TInventory.Item;
+using TInventory.Window;
 using UnityEngine;
 using static TInventory.Inventory;
 
@@ -18,18 +19,33 @@ namespace Prefabs.Inventory.Example
         
         private List<(ItemData item, float rarity)> _lootList;
 
+        private Window _window;
         
         private void Start()
         {
             _lootList = ItemFactory.GetFilteredItemList(_lootFilter).ToList();
         }
 
-        public void OpenLootBox()
+        public void Open()
+        {
+            if (_window is null)
+            {
+                CreateLootWindow();;
+            }
+            else
+            {
+                _window.Show();
+            }
+        }
+        
+        private void CreateLootWindow()
         {
             var window = CreateNewWindow("Loot Window", new Vector2(600, 600));
 
             if (window is null) return;
 
+            window.hideWindowOnClose = true;
+            
             var container = CreateNewContainer();
             
             container.InitializeContainer(_containerData);
@@ -50,6 +66,8 @@ namespace Prefabs.Inventory.Example
 
                 container.AddItem(itemToAdd);
             }
+
+            _window = window;
         }
     }
 }

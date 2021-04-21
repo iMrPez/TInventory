@@ -415,8 +415,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1095715365}
-        m_TargetAssemblyTypeName: Prefabs.Inventory.Example.ExampleLoot, Assembly-CSharp
-        m_MethodName: OpenLootBox
+        m_TargetAssemblyTypeName: Prefabs.Inventory.Example.LootBox, Assembly-CSharp
+        m_MethodName: Open
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -684,7 +684,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   touchHoldTime: 5
   unplaceableColor: {r: 0.8018868, g: 0.094562106, b: 0.094562106, a: 0.5882353}
-  defaultColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0.5882353}
 --- !u!114 &1531846236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1128,6 +1127,14 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
     - target: {fileID: 8308518147576537167, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
       propertyPath: _startContainers.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
+    - target: {fileID: 8308518147576537167, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
+      propertyPath: _startContainers.Array.data[0].id
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308518147576537167, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
+      propertyPath: _startContainers.Array.data[0].containerData
       value: 
       objectReference: {fileID: 11400000, guid: dcd778bca0366f3459eebf90315b36f5, type: 2}
     - target: {fileID: 8308518147623729109, guid: 8920db4aff7ed724cab20a2623874783, type: 3}

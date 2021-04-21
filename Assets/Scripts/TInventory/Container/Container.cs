@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TInventory.Item;
 using TMPro;
@@ -6,14 +7,16 @@ using UnityEngine;
 
 namespace TInventory.Container
 {
-    public class Container : MonoBehaviour
+    public abstract class Container : MonoBehaviour, IManageable
     {
 
         public TextMeshProUGUI TitleText;
+
+        public int containerId;
         
         [SerializeField] private ContainerData _containerData;
         
-        private List<Item.Item> _items = new List<Item.Item>();
+        [SerializeField] private List<Item.Item> _items = new List<Item.Item>();
         
         private List<ContainerGroup> _containerGroups;
 
@@ -24,18 +27,18 @@ namespace TInventory.Container
         public event ItemMovedDelegate ItemRemovedHandler;
         
         
-        private void Awake()
+        protected virtual void Awake()
         {
             RectTransform = GetComponent<RectTransform>();
         }
-        
-        
+
         /// <summary>
         /// Creates container based on the containerData
         /// </summary>
         /// <param name="containerData"></param>
-        public void InitializeContainer(ContainerData containerData)
+        public virtual void InitializeContainer(ContainerData containerData)
         {
+
             _containerData = containerData;
             
             ClearItems();
@@ -57,7 +60,7 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="groups">Container Groups</param>
         /// <returns>Size of container</returns>
-        private Vector2 GetContainerSize(List<ContainerGroup> groups)
+        protected virtual Vector2 GetContainerSize(List<ContainerGroup> groups)
         {
             
             var groupSize = Inventory.Instance.slotSize + Inventory.Instance.padding;
@@ -87,7 +90,7 @@ namespace TInventory.Container
         /// Creates Container Group
         /// </summary>
         /// <param name="containerGroup"></param>
-        private void CreateContainerGroup(ContainerGroup containerGroup)
+        protected virtual void CreateContainerGroup(ContainerGroup containerGroup)
         {
             var slotSize = Inventory.Instance.slotSize;
             var padding = Inventory.Instance.padding;
@@ -118,7 +121,7 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="containerData">Container Data</param>
         /// <returns>List of container groups</returns>
-        private List<ContainerGroup> GetContainerGroups(ContainerData containerData)
+        protected virtual List<ContainerGroup> GetContainerGroups(ContainerData containerData)
         {
             var groups = new List<ContainerGroup>();
             
@@ -165,7 +168,7 @@ namespace TInventory.Container
         /// <param name="x">X position</param>
         /// <param name="y">Y position</param>
         /// <returns>Container Group</returns>
-        private ContainerGroup CreateNewGroup(int groupId, int x, int y)
+        protected virtual ContainerGroup CreateNewGroup(int groupId, int x, int y)
         {
             var group = Instantiate(Inventory.Instance.ContainerGroupPrefab, RectTransform)
                 .GetComponent<ContainerGroup>();
@@ -180,7 +183,7 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="position">Position</param>
         /// <returns>Returns slot x and y from Container where supplied position lies.</returns>
-        public (Vector2 Slot, ContainerGroup ContainerGroup) GetSlotFromPosition(Vector3 position)
+        public virtual (Vector2 Slot, ContainerGroup ContainerGroup) GetSlotFromPosition(Vector3 position)
         {
             var containerGroup = InventoryUtility.GetContainerGroupAt(position);
 
@@ -209,7 +212,7 @@ namespace TInventory.Container
         /// <param name="containerGroup">Container Group</param>
         /// <param name="item">Item to place</param>
         /// <returns>If item can be placed at given position</returns>
-        public bool CanPlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
+        public virtual bool CanPlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
             if (_containerData.filter != null)
             {
@@ -226,7 +229,7 @@ namespace TInventory.Container
         /// <param name="slot">Slot to place item at</param>
         /// <param name="containerGroup"></param>
         /// <param name="item">Item to be placed</param>
-        public void PlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
+        public virtual void PlaceItemAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
             if (!_items.Contains(item))
             {
@@ -253,7 +256,7 @@ namespace TInventory.Container
         /// Removes item from list
         /// </summary>
         /// <param name="item"></param>
-        public void RemoveItem(Item.Item item)
+        public virtual void RemoveItem(Item.Item item)
         {
             _items.Remove(item);
             ItemRemovedHandler?.Invoke(item);
@@ -266,7 +269,7 @@ namespace TInventory.Container
         /// <param name="slot">Slot to check</param>
         /// <param name="containerGroup"></param>
         /// <returns>Returns true if Slot exists in Container</returns>
-        public bool IsSlotInsideContainer(Vector2 slot, ContainerGroup containerGroup)
+        public virtual bool IsSlotInsideContainer(Vector2 slot, ContainerGroup containerGroup)
         {
             if ((slot.x < 0) || (slot.y < 0)) return false;
             
@@ -286,7 +289,7 @@ namespace TInventory.Container
         /// <param name="containerGroup"></param>
         /// <param name="item">Item to check with</param>
         /// <returns>Returns true if Item fits at Slot</returns>
-        public bool CanItemFitAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
+        public virtual bool CanItemFitAt(Vector2 slot, ContainerGroup containerGroup, Item.Item item)
         {
             if (containerGroup is null || item is null) return false;
 
@@ -314,7 +317,7 @@ namespace TInventory.Container
         /// <param name="slot">Slot to check</param>
         /// <param name="containerGroup">Container Group</param>
         /// <returns>Returns true if an Item exists at Slot</returns>
-        public bool IsSlotInUse(Vector2 slot, ContainerGroup containerGroup)
+        public virtual bool IsSlotInUse(Vector2 slot, ContainerGroup containerGroup)
         {
             return IsSlotInUse(slot.x, slot.y, containerGroup);
         }
@@ -328,7 +331,7 @@ namespace TInventory.Container
         /// <param name="containerGroup">Container Group</param>
         /// <param name="itemToIgnore">Item to ignore</param>
         /// <returns>Returns true if an Item exists at Slot</returns>
-        public bool IsSlotInUse(float x, float y, ContainerGroup containerGroup, GameObject itemToIgnore = null)
+        public virtual bool IsSlotInUse(float x, float y, ContainerGroup containerGroup, GameObject itemToIgnore = null)
         {
 
             if (containerGroup is null) return true;
@@ -349,7 +352,7 @@ namespace TInventory.Container
         /// <summary>
         /// Clears all items in Container.
         /// </summary>
-        private void ClearItems()
+        public virtual void ClearItems()
         {
             foreach (var item in _items)
             {
@@ -365,7 +368,7 @@ namespace TInventory.Container
         /// </summary>
         /// <param name="item">Item to add</param>
         /// <returns>Returns true if Item fits and is successfully added to Container</returns>
-        public bool AddItem(Item.Item item)
+        public virtual bool AddItem(Item.Item item)
         {
             foreach (var containerGroup in _containerGroups)
             {
@@ -384,6 +387,43 @@ namespace TInventory.Container
                 }
             }
 
+            return false;
+        }
+
+        public virtual ContainerGroup GetContainerGroupFromId(int id)
+        {
+            return _containerGroups.Find(c => c.id == id);
+        }
+        
+        public virtual object GetModel()
+        {
+            var itemList = new List<string>();
+
+            foreach (var item in _items)
+            {
+                itemList.Add(JsonUtility.ToJson(item.GetModel()));
+            }
+
+            return new ContainerModel(itemList.ToArray(), _containerData);
+        }
+
+        public virtual bool LoadModel(object model)
+        {
+            var m = (ContainerModel)model;
+            
+            InitializeContainer(m.containerData);
+
+            foreach (var s in m.itemJson)
+            {
+                var itemModel = JsonUtility.FromJson<ItemModel>(s);
+
+                var item = ItemFactory.Instance.CreateItem(itemModel.id);
+
+                item.LoadModel(itemModel);
+                
+                PlaceItemAt(itemModel.slot, GetContainerGroupFromId(itemModel.containerGroupId), item);
+            }
+            
             return false;
         }
     }
