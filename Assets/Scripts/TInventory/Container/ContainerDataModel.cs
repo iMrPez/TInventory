@@ -4,7 +4,7 @@ namespace TInventory.Container
     {
         public string containerName;
         public Filter.Filter filter;
-        public int[] flattenedContainer;
+        public int[] container;
         public int width;
         public int height;
 
@@ -12,7 +12,7 @@ namespace TInventory.Container
         {
             containerName = containerData.containerName;
             filter = containerData.filter;
-            flattenedContainer = containerData._flattenedContainer;
+            container = containerData.Container;
             width = containerData.Width;
             height = containerData.Height;
         }

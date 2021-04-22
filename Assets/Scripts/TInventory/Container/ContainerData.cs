@@ -5,34 +5,24 @@ using UnityEngine;
 namespace TInventory.Container
 {
     [CreateAssetMenu(fileName = "ContainerData", menuName = "Inventory/Container")]
-    [Serializable]
-    public class ContainerData : ScriptableObject, IManageable
+    public class ContainerData : ScriptableObject
     {
         public string containerName;
 
         public Filter.Filter filter;
 
-        [SerializeField] internal int[] _flattenedContainer = new int[1];
+        public int[] Container;
 
-        public int[,] Container => ExpandArray(_flattenedContainer, Width, Height);
+        public int GetContainerGroupAt(int x, int y)
+        {
+            return Container[x + y * Width];
+        }
 
         public int Width = 1;
         public int Height = 1;
 
-        /// <summary>
-        /// Sets container
-        /// </summary>
-        /// <param name="container"></param>
-        public void SetContainer(int[,] container)
-        {
-            _flattenedContainer = FlattenArray(container);
 
-            Width = container.GetLength(0);
-            Height = container.GetLength(1);
-        }
-        
-        
-        /// <summary>
+        /*/// <summary>
         /// Flatten container to a saveable state
         /// </summary>
         /// <param name="arrayToConvert"></param>
@@ -75,9 +65,9 @@ namespace TInventory.Container
             }
 
             return convertedArray;
-        }
+        }*/
         
-        public object GetModel()
+        /*public object GetModel()
         {
             return new ContainerDataModel(this);
         }
@@ -92,6 +82,6 @@ namespace TInventory.Container
             Width = m.width;
             Height = m.height;
             return true;
-        }
+        }*/
     }
 }

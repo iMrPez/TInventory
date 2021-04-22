@@ -10,8 +10,6 @@ namespace TInventory.Editor
     [CustomEditor(typeof(ContainerData))]
     public class ContainerDataEditor : UnityEditor.Editor
     {
-        private int[,] _container;
-        
         Vector2Int _newContainerSize = Vector2Int.zero;
 
         bool _show;
@@ -20,17 +18,17 @@ namespace TInventory.Editor
 
         private SerializedProperty _filterProperty;
         
+        
+        
         public void OnEnable()
         {
             ContainerData containerData = (ContainerData)target;
 
-            var loadedObject = ObjectHandler.Load<ContainerDataModel>(containerData.GetInstanceID());
+            /*var loadedObject = ObjectHandler.Load<ContainerDataModel>(containerData.GetInstanceID());
             if (!(loadedObject is null))
             {
                 containerData.LoadModel(loadedObject);    
-            }
-            
-            _container = containerData.Container;
+            }*/
             
             _newContainerSize = new Vector2Int(containerData.Width, containerData.Height);
 
@@ -52,12 +50,11 @@ namespace TInventory.Editor
 
             EditorGUILayout.Separator();
             
-            // Updates the container size data
             if (GUILayout.Button("Update Container Size"))
             {
-                UpdateContainerSize();
+                UpdateContainerSize(containerData);
+
             }
-            
             
             EditorGUILayout.Separator();
             
@@ -67,7 +64,7 @@ namespace TInventory.Editor
             
             if (GUILayout.Button("Set To Group"))
             {
-                SetToGroup(_container, _groupNumber);
+                SetToGroup(_groupNumber, containerData);
             }
             
             EditorGUILayout.EndHorizontal();
@@ -76,16 +73,16 @@ namespace TInventory.Editor
             
             EditorGUILayout.HelpBox("Slot customization guide. \n0 Is an empty slot location. \n1 Is a single slot and will be spaced out from the other solo slots. \nAnything greater than 1 is a group. All groups must be in a square and will display an incorrect layout if groups are not properly set. A new number needs to be used for each group.", MessageType.Info);
             
-            DisplayContainer(_container);
+            DisplayContainer(containerData);
 
             EditorGUILayout.Separator();
             
             if (GUILayout.Button("Save Container"))
             {
-                containerData.SetContainer(_container);
-                ObjectHandler.Save(containerData, containerData.GetInstanceID());
+                EditorUtility.SetDirty(containerData);
+                AssetDatabase.SaveAssets();
             }
-
+            
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -107,12 +104,12 @@ namespace TInventory.Editor
         /// </summary>
         /// <param name="containerToModify">Container to be modified</param>
         /// <param name="group">Group to set container to</param>
-        private static void SetToGroup(int[,] containerToModify, int group)
+        private static void SetToGroup(int group, ContainerData containerData)
         {
-            for (int x = 0; x < containerToModify.GetLength(0); x++)
-            for (int y = 0; y < containerToModify.GetLength(1); y++)
+            for (int x = 0; x < containerData.Width; x++)
+            for (int y = 0; y < containerData.Height; y++)
             {
-                containerToModify[x, y] = group;
+                containerData.Container[x + y * containerData.Width] = group;
             }
         }
 
@@ -120,13 +117,16 @@ namespace TInventory.Editor
         /// <summary>
         /// Update container size
         /// </summary>
-        private void UpdateContainerSize()
+        private void UpdateContainerSize(ContainerData containerData)
         {
-            var oldContainer = _container;
-            
-            _container = new int[_newContainerSize.x, _newContainerSize.y];
+            var oldContainer = containerData.Container;
 
-            _container = CopyToContainer(_container, oldContainer);
+            containerData.Container = new int[_newContainerSize.x * _newContainerSize.y];
+
+            containerData.Container = CopyToContainer(containerData.Container, _newContainerSize,oldContainer, new Vector2(containerData.Width, containerData.Height));
+            
+            containerData.Width = _newContainerSize.x;
+            containerData.Height = _newContainerSize.y;
         }
 
         /// <summary>
@@ -135,15 +135,16 @@ namespace TInventory.Editor
         /// <param name="containerToModify">Container to be modified</param>
         /// <param name="dataToCopy">Container to copy</param>
         /// <returns>Container Matrix</returns>
-        private int[,] CopyToContainer(int[,] containerToModify, int[,] dataToCopy)
+        private int[] CopyToContainer(int[] containerToModify, Vector2 newSize, int[] dataToCopy, Vector2 oldSize)
         {
-            for (int x = 0; x < containerToModify.GetLength(0); x++)
-            for (int y = 0; y < containerToModify.GetLength(1); y++)
+
+            for (int x = 0; x < newSize.x; x++)
+            for (int y = 0; y < newSize.y; y++)
             {
-                if (x < dataToCopy.GetLength(0) &&
-                    y < dataToCopy.GetLength(1))
+                if (x < oldSize.x &&
+                    y < oldSize.y)
                 {
-                    containerToModify[x, y] = dataToCopy[x, y];
+                    containerToModify[(int) (x + y * newSize.x)] = dataToCopy[(int) (x + y * oldSize.x)];
                 }
             }
 
@@ -154,18 +155,18 @@ namespace TInventory.Editor
         /// Show Container
         /// </summary>
         /// <param name="container">Container Matrix</param>
-        private void DisplayContainer(int[,] container)
+        private void DisplayContainer(ContainerData containerData)
         {
             _show = EditorGUILayout.BeginFoldoutHeaderGroup(_show, "Show Container Data");
-            
+
             if (_show)
             {
-                for (int y = 0; y < container.GetLength(1); y++)
+                for (int y = 0; y < containerData.Height; y++)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    for (int x = 0; x < container.GetLength(0); x++)
+                    for (int x = 0; x < containerData.Width; x++)
                     {
-                        container[x, y] = EditorGUILayout.IntField(container[x, y]);
+                        containerData.Container[x + y * containerData.Width] = EditorGUILayout.IntField(containerData.Container[x + y * containerData.Width]);
                     }
 
                     EditorGUILayout.EndHorizontal();

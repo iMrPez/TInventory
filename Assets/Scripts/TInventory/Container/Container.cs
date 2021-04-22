@@ -128,7 +128,7 @@ namespace TInventory.Container
             for (int x = 0; x < containerData.Width; x++)
             for (int y = 0; y < containerData.Height; y++)
             {
-                var slot = containerData.Container[x, y];
+                var slot = containerData.Container[x + y * containerData.Width];
 
                 // Check if slot is a single slot or the slot is empty
                 switch (slot)
@@ -411,7 +411,7 @@ namespace TInventory.Container
         {
             var m = (ContainerModel)model;
             
-            InitializeContainer(m.containerData);
+            //InitializeContainer(m.containerData);
 
             foreach (var s in m.itemJson)
             {
