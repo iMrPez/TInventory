@@ -7,11 +7,7 @@ namespace TInventory
     {
         public static bool Save(IManageable obj, int id)
         {
-            if (id == 0)
-            {
-                Debug.LogWarning("Can't save, 0 is not a valid id!");
-                return false;
-            }
+            if (id == 0) return false;
             
             object model = obj.GetModel();
 
@@ -32,14 +28,14 @@ namespace TInventory
             }
         }
 
-        public static object Load<T>(int id)
+        public static string Load(int id)
         {
             try
             {
                 var json = File.ReadAllText(Application.persistentDataPath + $"//{id}.txt");
 
                 var loadedObject = JsonUtility.FromJson<SavedObjectWrapper>(json);
-                return JsonUtility.FromJson<T>(loadedObject.json);
+                return loadedObject.json;
             }
             catch
             {

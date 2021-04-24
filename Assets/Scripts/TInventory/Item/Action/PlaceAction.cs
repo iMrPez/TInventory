@@ -7,9 +7,19 @@ namespace TInventory.Item.Action
 
         public bool CanAct(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
+
             var containerAtTouch = InventoryUtility.GetContainerAt(Input.mousePosition);
 
             if (containerAtTouch is null) return false;
+            
+            if (heldItem is ContainerItem containerItem)
+            {
+                if (!(containerItem.Container is null))
+                {
+                    if(containerItem.Container == containerAtTouch ||
+                       containerItem.IsChildContainerOf(containerAtTouch)) return false;
+                }
+            }
             
             var slotGroup = containerAtTouch.GetSlotFromPosition(Input.mousePosition);
             
@@ -20,7 +30,7 @@ namespace TInventory.Item.Action
         public bool Act(Item heldItem = null, Item itemAtTouch = null, TInventory.Container.Container openContainer = null)
         {
             var containerAtTouch = InventoryUtility.GetContainerAt(Input.mousePosition);
-            
+
             if (containerAtTouch is null || heldItem is null) return false;
             
             var slotGroup = containerAtTouch.GetSlotFromPosition(Input.mousePosition);

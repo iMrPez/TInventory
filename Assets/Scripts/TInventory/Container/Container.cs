@@ -20,6 +20,8 @@ namespace TInventory.Container
         
         private List<ContainerGroup> _containerGroups;
 
+        public List<Item.Item> Items => _items;
+
         public RectTransform RectTransform { get; private set; }
         
         // Events
@@ -235,7 +237,7 @@ namespace TInventory.Container
             {
                 _items.Add(item);
             }
-
+            
             item.transform.SetParent(containerGroup.rectTransform);
 
             item.UpdatePlacementInfo(slot, containerGroup, null);
@@ -389,6 +391,30 @@ namespace TInventory.Container
 
             return false;
         }
+        
+        public virtual bool CanAddItem(Item.Item item, out (Vector2, ContainerGroup) location)
+        {
+            foreach (var containerGroup in _containerGroups)
+            {
+                for (int y = 0; y < containerGroup.size.y; y++)
+                {
+                    for (int x = 0; x < containerGroup.size.x; x++)
+                    {
+                        var slot = new Vector2(x, y);
+                        
+                        if (CanPlaceItemAt(slot, containerGroup, item))
+                        {
+                            location = (slot, containerGroup);
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            location = (Vector2.zero, null);
+            
+            return false;
+        }
 
         public virtual ContainerGroup GetContainerGroupFromId(int id)
         {
@@ -407,21 +433,19 @@ namespace TInventory.Container
             return new ContainerModel(itemList.ToArray(), _containerData);
         }
 
-        public virtual bool LoadModel(object model)
+        public virtual bool LoadModel(string modelJson)
         {
-            var m = (ContainerModel)model;
-            
-            //InitializeContainer(m.containerData);
+            var m = JsonUtility.FromJson<ContainerModel>(modelJson);
 
             foreach (var s in m.itemJson)
             {
-                var itemModel = JsonUtility.FromJson<ItemModel>(s);
+                var itemModelWrapper = JsonUtility.FromJson<ItemModelWrapper>(s);
 
-                var item = ItemFactory.Instance.CreateItem(itemModel.id);
+                var item = ItemFactory.Instance.CreateItem(itemModelWrapper.itemID);
 
-                item.LoadModel(itemModel);
+                item.LoadModel(itemModelWrapper.model);
                 
-                PlaceItemAt(itemModel.slot, GetContainerGroupFromId(itemModel.containerGroupId), item);
+                PlaceItemAt(itemModelWrapper.slot, GetContainerGroupFromId(itemModelWrapper.containerGroupId), item);
             }
             
             return false;

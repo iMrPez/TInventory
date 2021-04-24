@@ -17,7 +17,8 @@ namespace TInventory.Item
             {
                 new PlaceAction(),
                 new StackAction(),
-                new AttachAction()
+                new AttachAction(),
+                new ContainerAction(),
             };
         }
 
@@ -27,6 +28,11 @@ namespace TInventory.Item
             {
                 new DeleteOption(this)
             };
+        }
+
+        public override IOption GetDoubleClickAction()
+        {
+            return null;
         }
     }
 }

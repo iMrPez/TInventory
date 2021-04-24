@@ -1,4 +1,5 @@
 using System;
+using TInventory.Item;
 using UnityEngine;
 
 namespace TInventory.Container
@@ -27,7 +28,9 @@ namespace TInventory.Container
 
         public void Load()
         {
-            var model = ObjectHandler.Load<ContainerModel>(containerId);
+            if (containerId == 0) return;
+            
+            var model = ObjectHandler.Load(containerId);
 
             if (model is null) return;
             

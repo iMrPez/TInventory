@@ -4,6 +4,6 @@ namespace TInventory
     {
         public object GetModel();
 
-        public bool LoadModel(object model);
+        public bool LoadModel(string modelJson);
     }
 }

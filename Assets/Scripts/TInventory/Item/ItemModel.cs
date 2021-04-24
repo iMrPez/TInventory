@@ -12,16 +12,11 @@ namespace TInventory.Item
 
         public int count;
 
-        public int containerGroupId;
-        public Vector2 slot;
-
-        public ItemModel(int id, bool isRotated, int count, int containerGroupId, Vector2 slot)
+        public ItemModel(int id, bool isRotated, int count)
         {
             this.id = id;
             this.isRotated = isRotated;
             this.count = count;
-            this.containerGroupId = containerGroupId;
-            this.slot = slot;
         }
     }
 }

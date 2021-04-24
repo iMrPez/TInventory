@@ -94,9 +94,19 @@ namespace TInventory.Item
         {
             if (InputHandler.GetPrimaryButtonDown())
             {
+
+                var itemAtClick = _clickedItem;
+                
                 _clickedItem = InventoryUtility.GetItemAt(InputHandler.GetCursorPosition());
                 
                 if (_clickedItem is null) return false;
+
+                // Check if double clicking item
+                if (itemAtClick == _clickedItem && Time.time - _lastTouchTime < 0.3f)
+                {
+                    var action = itemAtClick.GetDoubleClickAction();
+                    if(!(action is null) && action.CanAct()) action.Act();
+                }
                 
                 _clickedPosition = Input.mousePosition;
                 

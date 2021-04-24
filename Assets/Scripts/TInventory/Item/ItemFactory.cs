@@ -70,9 +70,7 @@ namespace TInventory.Item
         {
             if (itemData != null)
             {
-                Debug.Log($"Item({itemData.id}) Created - {itemData}", itemData);
-                
-                var item = Instantiate(GetItemPrefab(itemData.itemPrefabType)).GetComponent<BasicItem>();
+                var item = Instantiate(GetItemPrefab(itemData.itemPrefabType)).GetComponent<Item>();
             
                 item.Initialize(itemData, null);
 
@@ -80,8 +78,6 @@ namespace TInventory.Item
                 
                 return item;
             }
-
-            Debug.LogError($"Error Creating Item with ID({itemData.id}!", this);
 
             return null;
         }

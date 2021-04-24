@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b895d2e815f515a41b454d403fc3e716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filter: {fileID: 11400000, guid: 73b81c7a52a741a489fed4d83b338e93, type: 2}
+  filter: {fileID: 0}
   equippedColor: {r: 0.20358579, g: 0.49056602, b: 0.20131719, a: 0.39215687}
 --- !u!224 &381990152 stripped
 RectTransform:
@@ -618,6 +618,8 @@ MonoBehaviour:
   itemPrefabs:
   - type: 0
     prefab: {fileID: 4747291459301666437, guid: 9da861900a20c524bbdddfbb51e29edb, type: 3}
+  - type: 1
+    prefab: {fileID: 438131538090031832, guid: 7e682b200ebd5464f9a4479e5d7087ec, type: 3}
   items:
   - {fileID: 11400000, guid: 071d4aef514527a4cbf642f4f47beaef, type: 2}
   - {fileID: 11400000, guid: 0402e7ca20d3eaf438718b9bf95354d7, type: 2}
@@ -985,6 +987,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1856951759}
     m_Modifications:
+    - target: {fileID: 4222712793231203702, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8308518147310330965, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1004,6 +1010,10 @@ PrefabInstance:
     - target: {fileID: 8308518147576537160, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
       propertyPath: m_Name
       value: Window
+      objectReference: {fileID: 0}
+    - target: {fileID: 8308518147576537160, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8308518147576537163, guid: 8920db4aff7ed724cab20a2623874783, type: 3}
       propertyPath: m_Pivot.x

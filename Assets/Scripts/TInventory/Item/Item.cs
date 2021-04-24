@@ -23,9 +23,8 @@ namespace TInventory.Item
                 /// <summary>
                 /// Item data scriptable object prefab.
                 /// </summary>
-                [Header("Item Data")] 
-                private ItemData _data;
-                public ItemData Data => _data;
+                [Header("Item Data")] protected ItemData data;
+                public ItemData Data => data;
                 
                 /// <summary>
                 /// item's current slot size.
@@ -64,6 +63,8 @@ namespace TInventory.Item
                 
                 public abstract List<IOption> GetContextMenuActions();
 
+                public abstract IOption GetDoubleClickAction();
+
                 /// <summary>
                 /// Sets the item data with the supplied item data.
                 /// </summary>
@@ -71,7 +72,7 @@ namespace TInventory.Item
                 /// <param name="container">Container the item is in.</param>
                 private void SetItemInfo(ItemData itemData, ContainerGroup containerGroup)
                 {
-                        _data = itemData;
+                        data = itemData;
                         
                         SetName(itemData.itemName);
 
@@ -87,7 +88,7 @@ namespace TInventory.Item
                 
                 private void UpdateNameDisplay()
                 {
-                        _itemNameText.text = _data.itemName.Length > 5 * _size.x ? _data.shortName : _data.itemName;
+                        _itemNameText.text = data.itemName.Length > 5 * _size.x ? data.shortName : data.itemName;
                 }
 
                 /// <summary>
@@ -110,11 +111,11 @@ namespace TInventory.Item
                         RectTransform rect = _iconImage.GetComponent<RectTransform>();
 
                         rect.sizeDelta = new Vector2(
-                                itemSize.x > _data.maxImageSize.x
-                                        ? _data.maxImageSize.x
+                                itemSize.x > data.maxImageSize.x
+                                        ? data.maxImageSize.x
                                         : itemSize.x,
-                                itemSize.y > _data.maxImageSize.y
-                                        ? _data.maxImageSize.y
+                                itemSize.y > data.maxImageSize.y
+                                        ? data.maxImageSize.y
                                         : itemSize.y);
                         
                 }
@@ -224,7 +225,7 @@ namespace TInventory.Item
                 /// <param name="newCount">Count to set the item amount to.</param>
                 public virtual void SetCount(int newCount = 9999)
                 {
-                        newCount = newCount > _data.maxCount ? _data.maxCount : newCount;
+                        newCount = newCount > data.maxCount ? data.maxCount : newCount;
                         
                         if (newCount == 0) Destroy();
                         
@@ -251,12 +252,15 @@ namespace TInventory.Item
 
                 public virtual object GetModel()
                 {
-                        return new ItemModel(_data.id, _isRotated, _count, ContainerGroup.id, SlotPosition);
+                        var itemModel = new ItemModel(data.id, _isRotated, _count);
+
+                        return new ItemModelWrapper(data.id, itemModel, ContainerGroup.id, SlotPosition);
                 }
                 
-                public virtual bool LoadModel(object Model)
+                public virtual bool LoadModel(string modelJson)
                 {
-                        var m = (ItemModel) Model;
+                        var m = JsonUtility.FromJson<ItemModel>(modelJson);
+                        /*var m = (ItemModel) model;*/
 
                         if (m.isRotated) Rotate();
                         

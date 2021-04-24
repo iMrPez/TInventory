@@ -7,10 +7,15 @@ using UnityEngine.UI;
 
 namespace TInventory.Window
 {
+
+    public delegate void Notify();
     
     [RequireComponent(typeof(RectTransform))]
     public class Window : MonoBehaviour
     {
+
+        public event Notify WindowClosedHandler; 
+        public event Notify WindowShownHandler; 
         
         /// <summary>
         /// Toggle for if the window can be moved or not.
@@ -211,6 +216,7 @@ namespace TInventory.Window
         /// </summary>
         public void Show()
         {
+            WindowShownHandler?.Invoke();
             gameObject.SetActive(true);
         }
         
@@ -219,6 +225,8 @@ namespace TInventory.Window
         /// </summary>
         public void Close()
         {
+            WindowClosedHandler?.Invoke();
+            
             if (!hideWindowOnClose)
             {
                 Destroy(gameObject);

@@ -37,6 +37,12 @@ namespace TInventory.Editor
             
             EditorGUILayout.LabelField("Description");
             itemData.description = EditorGUILayout.TextArea(itemData.description, GUILayout.MaxHeight(75));
+            
+            if (GUILayout.Button("Save Item"))
+            {
+                EditorUtility.SetDirty(itemData);
+                AssetDatabase.SaveAssets();
+            }
         }
     }
 }

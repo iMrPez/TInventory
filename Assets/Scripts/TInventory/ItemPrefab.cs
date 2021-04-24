@@ -9,6 +9,7 @@ namespace TInventory
         public enum ItemPrefabType
         {
             Basic = 0,
+            Container = 1
         }
 
         public ItemPrefabType type;
