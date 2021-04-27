@@ -1,4 +1,4 @@
-![](https://img.shields.io/static/v1?label=Version&message=0.1.4&color=%3CCOLOR%3E)
+![](https://img.shields.io/static/v1?label=Version&message=1.0.0&color=%3CCOLOR%3E)
 
 ## TInventory
 
