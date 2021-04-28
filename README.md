@@ -4,6 +4,10 @@
 
 TInventory is a size-based inventory framework for Unity. The framework makes setting up a size-based inventory for your game quick and easy. 
 
+This was mostly a project for my own games, but anyone is welcome to use it. Any recommendations, bugs, or questions can be sent to BrandenWeber1@gmail.com.
+
+
+
 #### Features
 
 - Non Square Inventories
@@ -19,6 +23,7 @@ TInventory is a size-based inventory framework for Unity. The framework makes se
 
 #### Tutorials
 
+There is a lot like action slots, custom item scripts, custom context menu items, and much more that I haven't yet covered in the tutorials shown below but I hope to make some for soon.
 
 
 ##### Initialize TInventory
