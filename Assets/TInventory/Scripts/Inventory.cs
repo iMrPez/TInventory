@@ -83,7 +83,7 @@ namespace TInventory
         /// <param name="title">Title of window</param>
         /// <param name="windowSize">Size of window</param>
         /// <returns>Window</returns>
-        public static Window.Window CreateNewWindow(string title, Vector2 windowSize = default)
+        public static Window.Window CreateNewWindow(string title, Vector2 windowSize)
         {
             var window = Instantiate(Instance.windowPrefab, Instance.windowCanvas).GetComponent<Window.Window>();
             

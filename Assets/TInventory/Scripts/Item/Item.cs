@@ -68,8 +68,8 @@ namespace TInventory.Item
                 /// <summary>
                 /// Sets the item data with the supplied item data.
                 /// </summary>
-                /// <param name="itemData">Item data.</param>
-                /// <param name="container">Container the item is in.</param>
+                /// <param name="itemData">ItemData</param>
+                /// <param name="containerGroup">ContainerGroup</param>
                 private void SetItemInfo(ItemData itemData, ContainerGroup containerGroup)
                 {
                         data = itemData;
@@ -83,7 +83,6 @@ namespace TInventory.Item
                         ContainerGroup = containerGroup;
                         
                         UpdateImageSize(RectTransform.sizeDelta);
-
                 }
                 
                 private void UpdateNameDisplay()
@@ -94,8 +93,8 @@ namespace TInventory.Item
                 /// <summary>
                 /// Initialize the item data.
                 /// </summary>
-                /// <param name="itemData">Item data.</param>
-                /// <param name="container">Container the item is in.</param>
+                /// <param name="itemData">ItemData</param>
+                /// <param name="containerGroup">ContainerGroup</param>
                 public void Initialize(ItemData itemData, ContainerGroup containerGroup)
                 {
                         SetItemInfo(itemData, containerGroup);
@@ -105,7 +104,7 @@ namespace TInventory.Item
                 /// <summary>
                 /// Updates the image size to fit current size
                 /// </summary>
-                /// <param name="itemSize">Size of item</param>
+                /// <param name="itemSize">Item Size</param>
                 public void UpdateImageSize(Vector2 itemSize)
                 {
                         RectTransform rect = _iconImage.GetComponent<RectTransform>();
@@ -231,7 +230,7 @@ namespace TInventory.Item
                         
                         _count = newCount;
                         
-                        _itemCountText.text = newCount.ToString();
+                        _itemCountText.text = newCount == 1 && data.maxCount == 1 ? "" : newCount.ToString();
                 }
 
                 /// <summary>

@@ -119,6 +119,14 @@ namespace TInventory.Editor
         /// </summary>
         private void UpdateContainerSize(ContainerData containerData)
         {
+            if (containerData.Container is null)
+            {
+                containerData.Container = new int[_newContainerSize.x * _newContainerSize.y];
+                containerData.Width = _newContainerSize.x;
+                containerData.Height = _newContainerSize.y;
+                return;
+            }
+            
             var oldContainer = containerData.Container;
 
             containerData.Container = new int[_newContainerSize.x * _newContainerSize.y];
@@ -157,6 +165,8 @@ namespace TInventory.Editor
         /// <param name="container">Container Matrix</param>
         private void DisplayContainer(ContainerData containerData)
         {
+            if (containerData.Container == null) return;
+            
             _show = EditorGUILayout.BeginFoldoutHeaderGroup(_show, "Show Container Data");
 
             if (_show)

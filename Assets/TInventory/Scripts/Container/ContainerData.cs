@@ -1,10 +1,8 @@
-using System;
-using System.IO;
 using UnityEngine;
 
 namespace TInventory.Container
 {
-    [CreateAssetMenu(fileName = "ContainerData", menuName = "Inventory/Container")]
+    [CreateAssetMenu(fileName = "ContainerData", menuName = "TInventory/Container")]
     public class ContainerData : ScriptableObject
     {
         public string containerName;

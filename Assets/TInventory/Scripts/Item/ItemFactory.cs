@@ -45,11 +45,11 @@ namespace TInventory.Item
         /// <param name="id">Id</param>
         /// <param name="container">Container</param>
         /// <returns>Returns initialized item</returns>
-        public Item CreateItem(int id)
+        public Item CreateItem(int id, int count)
         {
             var itemData = GetItemById(id);
 
-            return CreateItem(itemData);
+            return CreateItem(itemData, count);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace TInventory.Item
         /// </summary>
         /// <param name="itemData">Item Data</param>
         /// <returns>Item</returns>
-        public Item CreateItem(ItemData itemData)
+        public Item CreateItem(ItemData itemData, int count)
         {
             if (itemData != null)
             {
@@ -74,7 +74,7 @@ namespace TInventory.Item
             
                 item.Initialize(itemData, null);
 
-                item.SetCount(1);
+                item.SetCount(count);
                 
                 return item;
             }

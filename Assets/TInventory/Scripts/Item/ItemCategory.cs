@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TInventory.Item
 {
     
-    [CreateAssetMenu(fileName = "Item Category", menuName = "Inventory/Filter/Item Category")]
+    [CreateAssetMenu(fileName = "Item Category", menuName = "TInventory/Filter/Item Category")]
     public class ItemCategory : ScriptableObject
     {
         public List<TypeCategory> types;

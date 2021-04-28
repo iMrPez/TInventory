@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TInventory.Filter
 {
-    [CreateAssetMenu(fileName = "New Filter", menuName = "Inventory/Filter/Filter")]
+    [CreateAssetMenu(fileName = "New Filter", menuName = "TInventory/Filter/Filter")]
     public class Filter : ScriptableObject
     {
         public ItemCategory allowedCategory;

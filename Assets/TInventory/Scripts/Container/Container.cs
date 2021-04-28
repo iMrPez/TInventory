@@ -441,7 +441,7 @@ namespace TInventory.Container
             {
                 var itemModelWrapper = JsonUtility.FromJson<ItemModelWrapper>(s);
 
-                var item = ItemFactory.Instance.CreateItem(itemModelWrapper.itemID);
+                var item = ItemFactory.Instance.CreateItem(itemModelWrapper.itemID, 1);
 
                 item.LoadModel(itemModelWrapper.model);
                 
