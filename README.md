@@ -134,19 +134,19 @@ Description - Description of the item, not currently displayed anywhere.
 
 EXAMPLE
 
-![](D:\TInventory\HowToCreateItem\3.png)
+![](https://i.imgur.com/LMyaGAR.png)
 
 
 
 The item now needs to be added to the ItemFactory.
 
-![](D:\TInventory\HowToCreateItem\4.png)
+![](https://i.imgur.com/nfoCCVK.png)
 
 
 
 The item can now be added to our container we made above.
 
-![](D:\TInventory\HowToCreateItem\5.png)
+![](https://i.imgur.com/uQKjyvj.png)
 
 
 
