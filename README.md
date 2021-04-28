@@ -4,7 +4,7 @@
 
 TInventory is a size-based inventory framework for Unity. The framework makes setting up a size-based inventory for your game quick and easy. 
 
-This was mostly a project for my own games, but anyone is welcome to use it. Any recommendations, bugs, or questions can be sent to BrandenWeber1@gmail.com.
+This was mostly a project for my own games, but anyone is welcome to use it.
 
 
 
@@ -154,3 +154,4 @@ The item can now be added to our container we made above.
 
 Trello | https://trello.com/b/xuL95njz/tinventory
 
+Any recommendations, bugs, or questions can be sent to BrandenWeber1@gmail.com.
